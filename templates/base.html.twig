@@ -2,18 +2,19 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
+        <title>{% block title %}ScaleChanger - {{ title is defined ? title : 'Bienvenue' }}{% endblock %}</title>
+
         {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
+            <link rel="stylesheet" href="{{ asset('css/style.css') }}" type="text/css">
         {% endblock %}
 
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
-        {% endblock %}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400&display=swap" rel="stylesheet">
     </head>
     <body>
         {% block body %}{% endblock %}
     </body>
+
+    {% block javascripts %}{% endblock %}
 </html>

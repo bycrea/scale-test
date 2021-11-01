@@ -1,0 +1,184 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: #212121;
+}
+
+body {
+    box-sizing: border-box;
+    width: 100vw;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 1.4em;
+}
+
+input[type="submit"] {
+    cursor: pointer;
+}
+
+
+
+.icon {
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.icon:hover {
+    opacity: .65;
+}
+
+
+/* ---- ADMIN ---- */
+#admin header {
+    width: 100%;
+    margin: 50px 0;
+    text-align: center;
+}
+
+#admin header ul.menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style-type: none;
+}
+
+#admin header ul.menu li {
+    min-width: 100px;
+    padding: 12px;
+    font-size: 1.1em;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e3e3e3;
+    border-right: 1px solid #e3e3e3;
+    border-radius: 10px 0 0 0;
+    color: #505050;
+    background-color: #fafafa;
+    cursor: pointer;
+}
+
+#admin header ul.menu li:not(.active):hover {
+    border-radius: 15px 0 0 0;
+    background-color: #f5f4f4;
+}
+
+#admin header ul.menu li.active {
+    border-bottom: none;
+    color: initial;
+    background-color: white;
+}
+
+
+#admin .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0 30px;
+}
+
+#admin .head .icon {
+    width: 100%;
+    max-width: 30px;
+}
+
+
+/* ---- ADMIN - USERS ---- */
+#admin .users {
+    width: 70%;
+    margin: 0 auto;
+}
+
+#admin .users table {
+    width: 100%;
+}
+
+#admin .users table > *{
+    text-align: left;
+}
+
+#admin .users table .icon{
+    width: 100%;
+    max-width: 25px;
+}
+
+#admin .users table th,
+#admin .users table td {
+    width: calc(100%/8);
+    padding: 5px;
+}
+
+#admin .users table th.center,
+#admin .users table td.center {
+    text-align: center;
+}
+
+#admin .users form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin .users form > * {
+    width: 50%;
+    padding: 10px;
+}
+
+#admin .users form label{
+    margin-left: 10px;
+}
+
+#admin .users form input[type="submit"]{
+    margin-top: 30px;
+}
+
+#admin .users form input:disabled{
+    background-color: whitesmoke;
+}
+
+#admin .pop-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(33, 33, 33, 0.25);
+}
+
+#admin .pop-link .copy {
+    display: flex;
+    flex-direction: column;
+    width: 60vw;
+    height: 10vh;
+    padding: 10px;
+    margin-bottom: 30vh;
+    box-shadow: 2px 10px 25px #0000004f;
+    background-color: white;
+}
+
+#admin .pop-link .copy > * {
+    display: block;
+    width: auto;
+    padding: 10px;
+    border: none;
+}
+
+#admin .pop-link .copy > input {
+    text-align: center;
+    background-color: whitesmoke;
+}
+
+#admin .pop-link.active {
+    display: flex;
+}
