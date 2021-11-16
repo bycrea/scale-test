@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% set title = diagnostic.name %}
+
+{% block body %}
+<main id="user">
+    <div class="container participation">
+        <div class="head">
+            <div class="logo">
+                <img src="" alt="logo scaleChanger">
+            </div>
+
+            <h1 class="title">{{ diagnostic.name }}</h1>
+        </div>
+
+        <div class="form">
+            <form method="get">
+                <input type="hidden" name="participation" value="{{ participation.id }}">
+
+                <div class="import">
+                    {# question imported here #}
+                </div>
+
+                <input type="submit" value="{{ initiate != false ? 'Continuer' : 'Commencer' }}">
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelector('form').addEventListener('submit', nextQuestion);
+        function nextQuestion(e)
+        {
+            e.preventDefault();
+
+            let importDiv   = document.querySelector('.import');
+            let required    = importDiv.querySelector('input[name="required"]');
+            let form        = new FormData(document.querySelector('form'));
+
+            let requestBody = {};
+            if(required === null) {
+                requestBody = {method: "GET"};
+            } else {
+                if(required.value === "1" && form.get('answers[]') === null) {
+                    alert('Merci de répondre à la question.');
+                    return;
+                }
+
+                requestBody = {
+                    method: "POST",
+                    body: form
+                };
+            }
+
+            fetch('/participation/next/{{ participation.id }}', requestBody)
+                .then(r => r.json())
+                .then(json => {
+                    if(json.done === true) {
+                        location.href = '/participation/over/{{ participation.id }}';
+                    } else {
+                        importDiv.innerHTML = json.html;
+                    }
+
+                    document.querySelector('input[type="submit"]').value = "Continuer";
+                })
+                .catch(e => {
+                    console.error(e);
+                    handleError(e);
+                });
+        }
+
+        function handleError(e)
+        {
+            console.log('TODO');
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,23 @@
+
+{% set id = question.answerType %}
+{% set answerType = constant('ANSWERTYPES', question)[id] %}
+
+<div class="answer">
+    {% if id < 10 %}
+        {% set i = 0 %}
+        {% for key, answer in question.answers %}
+            {{ i == 0 ? '<div class="row">'|raw : '' }}
+                <label for="answer-{{ key }}">
+                    <input type="{{ answerType.type }}" id="answer-{{ key }}" name="answers[]" value="{{ key }}">&nbsp;&nbsp;{{ answer.answer }}
+                </label>
+            {{ i == 3 ? '</div>'|raw : '' }}
+            {% set i = i == 3 ? 0 : i+1 %}
+        {% endfor %}
+    {% else %}
+        <input type="{{ answerType.type }}" name="answers[]" placeholder="{{ answerType.label }}">
+    {% endif %}
+    <input type="hidden" name="question" value="{{ question.id }}">
+    <input type="hidden" name="method" value="{{ answerType.method is not null ? answerType.method : "" }}">
+    <input type="hidden" name="required" value="{{ question.required }}">
+</div>
+

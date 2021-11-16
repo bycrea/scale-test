@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Participation;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,12 +13,18 @@ class IndexController extends AbstractController
     /**
      * @Route("/", name="index")
      */
-    public function index(): Response
+    public function index(EntityManagerInterface $em): Response
     {
+        $participations = $em->getRepository(Participation::class)->findBy(
+            ['user' => $this->getUser()],
+            ['createdAt' => 'DESC']
+        );
+
         return $this->render('index/index.html.twig', [
-            'controller_name' => 'Index',
+            'participations' => $participations,
         ]);
     }
+
 
     /**
      * @Route("/ban", name="ban")

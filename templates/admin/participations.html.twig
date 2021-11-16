@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="admin">
+        {{ include('admin/_header.html.twig') }}
+
+        <div class="container participations">
+            <div class="head">
+                <h1 class="title">Liste des participations</h1>
+                <a href="{{ path('admin_participation_new') }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th class="small">Id</th>
+                        <th>Utilisateur</th>
+                        <th>Diagnostique</th>
+                        <th class="small center">crée le</th>
+                        <th class="small center">maj le</th>
+                        <th class="small center">Voir</th>
+                        <th class="small center">Reset</th>
+                        <th class="small center">Suppr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for participation in participations %}
+                        <tr>
+                            <td class="small">{{ participation.id }}</td>
+                            {% set company = participation.user.company is defined ? '<br><i>' ~ participation.user.company ~ '</i>' : "" %}
+                            <td>{{ participation.user.username }}{{ company|raw }}</td>
+                            <td>{{ participation.diagnostic.name }}</td>
+                            <td class="small center">{{ participation.createdAt|date('d-m-y H:i') }}</td>
+                            <td class="small center">{{ participation.createdAt == participation.lastUpdate ? "--" : participation.lastUpdate|date('d-m-y H:i') }}</td>
+                            <td class="small center">
+                                {% if participation.done %}
+                                    <a href="{{ path('admin_participation_view', {participation: participation.id}) }}">
+                                        <img class="icon" src="{{ asset('img/icon/see.png') }}" alt="edit">
+                                    </a>
+                                {% else %}
+                                    <img class="icon disabled" src="{{ asset('img/icon/see.png') }}" alt="edit">
+                                {% endif %}
+                            </td>
+                            <td class="small center">
+                                <a href="{{ path('admin_participation_reset', {participation: participation.id}) }}">
+                                    <img class="icon" src="{{ asset('img/icon/return.png') }}" alt="reset">
+                                </a>
+                            </td>
+                            <td class="small center">
+                                <a href="{{ path('admin_participation_delete', {participation: participation.id}) }}">
+                                    <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <table style="margin-top: 50px;">
+                            <tr>
+                                <td style="text-align: center;">Aucune participation</td>
+                            </tr>
+                        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pop-link">
+            <div class="copy">
+                <label for="">Lien de connexion :</label>
+                <input type="text" name="copy" value="">
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    <script></script>
+{% endblock %}

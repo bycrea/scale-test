@@ -1,0 +1,65 @@
+
+{% if id < 10 %}
+    {% for answer in question.answers %}
+        <div class="answer">
+            <div class="inputs">
+                <input type="text" name="answers[]" value="{{ answer['answer'] }}" required>
+                <input type="number" name="scores[]" min="0" max="{{ id == 3 or id == 4 ? '1' : '99' }}" value="{{ answer['score'] }}" required>
+                <a href="" onclick="removeMultipleAnswer(event)"><img class="icon" src="{{ asset('img/icon/minus.png') }}" alt="remove"></a>
+                <a href="" onclick="addMultipleAnswer(event)"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="answer">
+        <input type="{{ answerType.type }}" placeholder="{{ answerType.label }}">
+    </div>
+{% endif %}
+
+{% if id < 10 %}
+    {% set isQLink = question.qlink is not empty %}
+    <div class="qlink {{ isQLink ? '' : 'disabled' }}">
+        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQLink ? 'checked' : '' }}></label>
+        Le résultat dépendra de la réponse à la question&nbsp;
+        <input type="number" name="qlink[]" min="0" value="{{ isQLink ? question.qlink[0] : '' }}" {{ isQLink ? '' : 'disabled' }}>
+        &nbsp;si le résultat de celle-ci est&nbsp;
+        <select name="qlink[]" {{ isQLink ? '' : 'disabled' }}>
+            <option value="">...</option>
+            <option value="&gt;" {{ isQLink and question.qlink[1] == ">" ? 'selected' : '' }}>&gt;</option>
+            <option value="&lt;" {{ isQLink and question.qlink[1] == "<" ? 'selected' : '' }}>&lt;</option>
+            <option value="&gt;=" {{ isQLink and question.qlink[1] == ">=" ? 'selected' : '' }}>&gt;=</option>
+            <option value="&lt;=" {{ isQLink and question.qlink[1] == "<=" ? 'selected' : '' }}>&lt;=</option>
+            <option value="==" {{ isQLink and question.qlink[1] == "==" ? 'selected' : '' }}>==</option>
+        </select>
+        &nbsp;au résultat de la question actuelle.
+    </div>
+
+    {% set isQNext = question.qnext is not empty %}
+    <div class="qnext {{ isQNext ? '' : 'disabled' }}">
+        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQNext ? 'checked' : '' }}></label>
+        On appelera la question&nbsp;
+        <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[0] : '' }}" {{ isQNext ? '' : 'disabled' }}>
+        &nbsp;si le résultat à la question actuelle est&nbsp;
+        <select name="qnext[]" {{ isQNext ? '' : 'disabled' }}>
+            <option value="">...</option>
+            <option value="&gt;" {{ isQNext and question.qnext[1] == ">" ? 'selected' : '' }}>&gt;</option>
+            <option value="&lt;" {{ isQNext and question.qnext[1] == "<" ? 'selected' : '' }}>&lt;</option>
+            <option value="&gt;=" {{ isQNext and question.qnext[1] == ">=" ? 'selected' : '' }}>&gt;=</option>
+            <option value="&lt;=" {{ isQNext and question.qnext[1] == "<=" ? 'selected' : '' }}>&lt;=</option>
+            <option value="==" {{ isQNext and question.qnext[1] == "==" ? 'selected' : '' }}>==</option>
+        </select>
+        &nbsp;à&nbsp;
+        <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[2] : '' }}" {{ isQNext ? '' : 'disabled' }}>
+    </div>
+
+    <div class="factors">
+        <label>
+            <span>Pondération Categorie&nbsp;</span>
+            <input type="number" name="categoryFactor" min="0" value="{{ question.categoryFactor ?? 0 }}" {{ id < 5 ? '' : 'disabled' }}>
+        </label>
+        <label>
+            <span>Pondération Global&nbsp;</span>
+            <input type="number" name="globalFactor" min="0" value="{{ question.globalFactor ?? 0 }}" {{ id < 5 ? '' : 'disabled' }}>
+        </label>
+    </div>
+{% endif %}

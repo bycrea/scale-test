@@ -6,13 +6,13 @@
     <main id="admin">
         {{ include('admin/_header.html.twig') }}
 
-        <div class="users">
+        <div class="container user">
             <div class="head">
-                <h1 class="title">Liste des utilisateurs</h1>
-                <a href="{{ path('admin_edit_user') }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
+                <h1 class="title">Editer un utilisateur</h1>
+                <a href="{{ path('admin_users') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
             </div>
 
-            <form action="{{ path('admin_edit_user', {id: user.id}) }}" method="post">
+            <form action="{{ path('admin_user_edit', {id: user.id}) }}" method="post">
                 <label>Nom</label><input type="text" name="username" value="{{ user.username }}">
                 <label>Email</label><input type="email" name="email" value="{{ user.email }}">
                 <label>Entreprise</label><input type="text" name="company" value="{{ user.company }}">

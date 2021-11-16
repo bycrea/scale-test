@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="admin">
+        {{ include('admin/_header.html.twig') }}
+
+        <div class="container participations">
+            <div class="head">
+                <h1 class="title">Ajouter une participation</h1>
+                <a href="{{ path('admin_participations') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
+            </div>
+
+            <form action="{{ path('admin_participation_new') }}" method="post">
+                <div class="create">
+                    <div class="switch">
+                        <label for="user">Choisir un utilisateur</label>
+
+                        <label for="username">Noms<input id="username" type="radio" name="switch-search" value="username" checked></label>
+                        <label for="email">Email<input id="email" type="radio" name="switch-search" value="email"></label>
+                    </div>
+                    <select name="user" id="user">
+                        {{ include('admin/participation_switch_username.html.twig') }}
+                    </select>
+
+                    <label for="diagnostic">Associer un diagnostique</label>
+                    <select name="diagnostic" id="diagnostic">
+                        <option value="">...</option>
+                        {% for diagnostic in diagnostics %}
+                            <option value="{{ diagnostic.id }}">{{ diagnostic.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <input type="submit" value="Ajouter">
+            </form>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('input[name="switch-search"]').forEach(i => {
+            i.addEventListener('change', e => {
+                fetch('/admin/participation/switch/' + e.target.value)
+                    .then(r => r.text()).then(html => {
+                        document.querySelector('select[name="user"]').innerHTML = html;
+                    });
+            });
+        });
+    </script>
+{% endblock %}

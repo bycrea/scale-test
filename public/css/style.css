@@ -5,10 +5,10 @@
     font-size: 15px;
     font-family: 'Roboto Condensed', sans-serif;
     color: #212121;
+    box-sizing: border-box;
 }
 
 body {
-    box-sizing: border-box;
     width: 100vw;
 }
 
@@ -20,23 +20,228 @@ h1 {
     font-size: 1.4em;
 }
 
+h1 span {
+    font-size: inherit;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
 input[type="submit"] {
     cursor: pointer;
 }
-
-
 
 .icon {
     object-fit: cover;
     cursor: pointer;
 }
 
-.icon:hover {
-    opacity: .65;
+.icon.disabled {
+    opacity: .25;
+}
+
+.icon:hover:not(.disabled) {
+    opacity: .5;
+}
+
+.sn {
+    user-select: none !important;
 }
 
 
-/* ---- ADMIN ---- */
+
+/* ---- USER - INDEX ---- */
+#user .head .logo {
+    width: 100%;
+    min-height: 10vh;
+    text-align: center;
+}
+
+
+
+/* ---- USER - PARTICIPATION ---- */
+#user .participation .head > * {
+    width: 100%;
+    text-align: center;
+}
+
+#user .participation .head .title {
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+#user .participation .head .infos {
+    font-size: 1em;
+    font-weight: lighter;
+}
+
+#user .participation input[type="submit"] {
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: black;
+}
+
+#user .participation .import {
+    width: 100%;
+    min-height: 10vh;
+}
+
+#user .participation .category {
+    width: 100%;
+    height: 1px;
+    min-height: 50vh;
+    padding: 50px;
+    border-radius: 20px;
+}
+
+#user .participation .category .title {
+    width: 100%;
+    margin-bottom: 3px;
+}
+
+#user .participation .category .title:after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 1px;
+    background-color: black;
+}
+
+#user .participation .category .infos {
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: .9em;
+    font-style: italic;
+    color: #333;
+}
+
+#user .participation .category .question {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+
+#user .participation .category .question .ask{
+    font-size: 1.5em;
+}
+
+#user .participation .category .question .infos {
+    text-align: center;
+}
+
+#user .participation .category .question .answer {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#user .participation .category .question .row {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin: 0 20px auto;
+}
+
+#user .participation .category .question label {
+    display: flex;
+    min-width: 150px;
+    padding: 5px;
+}
+
+#user .participation .category .question label > input {
+}
+
+
+
+/* ---- ADMIN / USERS ---- */
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 20px 0 30px;
+}
+
+.head .icon {
+    width: 100%;
+    max-width: 30px;
+}
+
+#admin .container {
+    width: 70%;
+    margin: 0 auto;
+}
+
+#user .container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.container table {
+    width: 100%;
+}
+
+.container table > *{
+    text-align: left;
+}
+
+.container table .icon{
+    width: 100%;
+    max-width: 25px;
+}
+
+.container table th,
+.container table td {
+    width: calc(100%/8);
+    padding: 5px;
+}
+
+.container table th.center,
+.container table td.center {
+    text-align: center;
+}
+
+.container table th.small,
+.container table td.small {
+    max-width: 5%;
+}
+
+.container table th.x-small,
+.container table td.x-small {
+    max-width: 1%;
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container form label {
+    padding-left: 10px;
+}
+
+.container form input[type="submit"] {
+    margin-top: 50px;
+    margin-bottom: 15vh;
+}
+
+.container form input:disabled{
+    background-color: whitesmoke;
+}
+
+
+
+/* ---- ADMIN - MENU---- */
 #admin header {
     width: 100%;
     margin: 50px 0;
@@ -76,72 +281,19 @@ input[type="submit"] {
 }
 
 
-#admin .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin: 20px 0 30px;
+
+/* ---- ADMIN ---- */
+#admin .container.users {
+    width: 80%;
 }
 
-#admin .head .icon {
-    width: 100%;
-    max-width: 30px;
-}
-
-
-/* ---- ADMIN - USERS ---- */
-#admin .users {
-    width: 70%;
-    margin: 0 auto;
-}
-
-#admin .users table {
-    width: 100%;
-}
-
-#admin .users table > *{
-    text-align: left;
-}
-
-#admin .users table .icon{
-    width: 100%;
-    max-width: 25px;
-}
-
-#admin .users table th,
-#admin .users table td {
-    width: calc(100%/8);
-    padding: 5px;
-}
-
-#admin .users table th.center,
-#admin .users table td.center {
-    text-align: center;
-}
-
-#admin .users form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#admin .users form > * {
+#admin .container.user {
     width: 50%;
+}
+
+#admin .container.user form > * {
+    width: 90%;
     padding: 10px;
-}
-
-#admin .users form label{
-    margin-left: 10px;
-}
-
-#admin .users form input[type="submit"]{
-    margin-top: 30px;
-}
-
-#admin .users form input:disabled{
-    background-color: whitesmoke;
 }
 
 #admin .pop-link {
@@ -182,3 +334,296 @@ input[type="submit"] {
 #admin .pop-link.active {
     display: flex;
 }
+
+
+
+/* ---- ADMIN - DIAGNOSTICS ---- */
+#admin .container.diagnostics {
+    width: 80%;
+}
+
+#admin .container.diagnostics form > * {
+    width: 50%;
+    padding: 10px;
+}
+
+#admin .container.diagnostics .head .infos {
+    display: block;
+    width: 100%;
+    font-style: italic;
+}
+
+#admin .container.diagnostics form .category,
+#admin .container.diagnostics form .global {
+    width: 100%;
+}
+
+#admin .container.diagnostics form .top,
+#admin .container.diagnostics form .top {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 2px solid whitesmoke;
+    cursor: pointer;
+}
+
+#admin .container.diagnostics form .top .name {
+    margin-right: auto;
+}
+
+#admin .container.diagnostics form .top label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#admin .container.diagnostics form .top input[name*="scales"] {
+    max-width: 50px;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+#admin .container.diagnostics form .category .questions {
+    display: none;
+    margin-bottom: 2em;
+}
+
+#admin .container.diagnostics form .category.active .questions {
+    display: block;
+}
+
+#admin .container.diagnostics form .questions table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#admin .container.diagnostics form .questions table tr {
+    height: 70px;
+}
+
+#admin .container.diagnostics form .questions table tr.question.drag {
+    opacity: .2;
+}
+
+#admin .container.diagnostics form .questions table tr.question.dragover {
+    opacity: .5;
+    background-color: whitesmoke;
+    border-bottom: 1pt solid black;
+}
+
+#admin .container.diagnostics form .questions table td {
+    text-align: left;
+}
+
+#admin .container.diagnostics form .questions table td img {
+    max-width: 20px;
+    float: right;
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+#admin .container.diagnostics form .questions table td.qlink input,
+#admin .container.diagnostics form .questions table td.qnext input,
+#admin .container.diagnostics form .questions table td.factor input{
+    width: 30px;
+    font-size: 12px;
+    padding: 2px;
+    text-align: center;
+}
+
+#admin .container.diagnostics .questions .question.add {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin .container.diagnostics .questions .question.add span {
+    padding: 20px;
+}
+
+#admin .container.diagnostics .questions .question.add .icon {
+    width: 100%;
+    max-width: 22px;
+}
+
+#admin .container.diagnostics form .global {
+    margin-top: 2em;
+}
+
+
+
+/* ---- ADMIN - ADD - QUESTION ---- */
+#admin .container.diagnostics .create {
+    width: 80%;
+}
+
+#admin .container.diagnostics .create > * {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+}
+
+#admin .container.diagnostics .create label {
+    margin-top: 20px;
+}
+
+#admin .container.diagnostics .create textarea {
+    height: 50px;
+    resize: vertical;
+}
+
+#admin .container.diagnostics .create .answers {
+    display: flex;
+    flex-direction: column;
+}
+
+#admin .container.diagnostics .create .answer {
+    margin-bottom: 10px;
+}
+
+#admin .container.diagnostics .create .answer > * {
+    width: 100%;
+}
+
+#admin .container.diagnostics .create .answer > input {
+    padding: 5px 0;
+}
+
+#admin .container.diagnostics .create .answer .inputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+#admin .container.diagnostics .create .answer .inputs input {
+    width: 80%;
+}
+
+#admin .container.diagnostics .create .answer .inputs input[type="number"] {
+    width: 10%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#admin .container.diagnostics .create .answer .inputs .score {
+    margin-left: auto;
+}
+
+#admin .container.diagnostics .create .answer .inputs .icon {
+    max-width: 20px;
+    margin: 0 5px;
+}
+
+#admin .container.diagnostics .create .factors {
+    padding: 10px;
+}
+
+#admin .container.diagnostics .create .factors label {
+    display: block;
+    width: 100%;
+}
+
+#admin .container.diagnostics .create .factors span {
+    display: inline-block;
+    width: 200px;
+    padding: 5px;
+}
+
+#admin .container.diagnostics .create .factors input {
+    display: inline-block;
+    width: 50px;
+    padding: 5px;
+}
+
+#admin .container.diagnostics .create .qlink,
+#admin .container.diagnostics .create .qnext {
+    width: 100%;
+    padding: 10px;
+    color: black;
+}
+
+#admin .container.diagnostics .create .qlink.disabled,
+#admin .container.diagnostics .create .qnext.disabled {
+    color: #bdbdc4;
+}
+
+#admin .container.diagnostics .create .qlink .activate,
+#admin .container.diagnostics .create .qnext .activate {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+#admin .container.diagnostics .create .qlink select,
+#admin .container.diagnostics .create .qnext select,
+#admin .container.diagnostics .create .qlink input,
+#admin .container.diagnostics .create .qnext input {
+    width: 50px;
+    padding: 5px;
+}
+
+#admin .container.question {
+    width: 50%;
+}
+
+#admin .container.question form .recap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 90%;
+}
+
+#admin .container.question form .recap .title {
+    margin-top: 2em;
+}
+
+#admin .container.question form .recap .alert {
+    padding: 10px 0;
+    color: #b42723;
+}
+
+
+
+/* ---- ADMIN - PARTICIPATIONS ---- */
+#admin .container.participations {
+    width: 80%;
+}
+
+#admin .participations .create {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+}
+
+#admin .container.participations form > * {
+    width: 80%;
+    padding: 10px;
+}
+
+#admin .container.participations form select {
+    padding: 10px;
+    margin-bottom: 50px;
+}
+
+#admin .container.participations form label {
+    margin-bottom: 10px;
+}
+
+#admin .container.participations form .switch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#admin .container.participations form .switch label > input {
+    margin-left: 10px;
+}
+
+#admin .container.participations form label[for="username"] {
+    margin-left: auto;
+}
+

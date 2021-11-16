@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="admin">
+        {{ include('admin/_header.html.twig') }}
+
+        <div class="container diagnostics question">
+            <div class="head">
+                <h1 class="title">Suppression du diagnostique N°{{ diagnostic.id }}</h1>
+                <a href="{{ referrer }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
+            </div>
+
+            <form action="{{ path('admin_diagnostic_delete', {diagnostic: diagnostic.id}) }}" method="post">
+                <input type="hidden" name="referrer" value="{{ referrer }}">
+
+                <div class="recap">
+                    <h2 class="title">Diagnostique : {{diagnostic.name }}</h2>
+                    <p><i>{{ diagnostic.comment }}</i></p>
+
+                    <h2 class="title">Utilisé dans :</h2>
+                    <p><i>- {{ participations }} participations</i></p>
+                    {% if participations > 0 %}
+                        <p class="alert">NB : toutes ces participations seront supprimées !</p>
+                    {% endif %}
+                </div>
+
+                <input type="submit" value="Supprimer définitivement ?">
+            </form>
+        </div>
+    </main>
+{% endblock %}
+

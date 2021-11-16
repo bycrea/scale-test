@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="admin">
+        {{ include('admin/_header.html.twig') }}
+
+        <div class="container diagnostics">
+            <div class="head">
+                <h1 class="title">Liste des diagnostiques</h1>
+                <a href="{{ path('admin_diagnostic_new') }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th class="small">Id</th>
+                        <th>Nom</th>
+                        <th>Commentaire</th>
+                        <th class="small center">Modif.</th>
+                        <th class="small center">Suppr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for diagnostic in diagnostics %}
+                        <tr>
+                            <td class="small">{{ diagnostic.id }}</td>
+                            <td>{{ diagnostic.name }}</td>
+                            <td>{{ diagnostic.comment }}</td>
+                            <td class="small center">
+                                <a href="{{ path('admin_diagnostic_edit', {diagnostic: diagnostic.id}) }}">
+                                    <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
+                                </a>
+                            </td>
+                            <td class="small center">
+                                <a href="{{ path('admin_diagnostic_delete', {diagnostic: diagnostic.id}) }}">
+                                    <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pop-link">
+            <div class="copy">
+                <label for="">Lien de connexion :</label>
+                <input type="text" name="copy" value="">
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    <script></script>
+{% endblock %}

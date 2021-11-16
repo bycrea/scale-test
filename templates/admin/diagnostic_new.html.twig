@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="admin">
+        {{ include('admin/_header.html.twig') }}
+
+        <div class="container diagnostics">
+            <div class="head">
+                <h1 class="title">Editer un diagnostique</h1>
+                <a href="{{ path('admin_diagnostics') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
+            </div>
+
+            <form action="{{ path('admin_diagnostic_new') }}" method="post">
+                <div class="create">
+                    <label for="name">Nom du diagnostique<sup>*</sup></label>
+                    <input type="text" id="name" name="name" value="" required>
+
+                    <label for="comment">Commentaire (Admin)</label>
+                    <textarea id="comment" name="comment" rows="10"></textarea>
+                </div>
+
+                <input type="submit" value="Créer">
+            </form>
+        </div>
+    </main>
+
+
+    <div class="pop-new-question">
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('.category .top').forEach(top => {
+            top.addEventListener('click', () => {
+                if(typeof top.parentNode === "undefined" || !top.parentNode.classList.contains('category')) return false;
+
+                if(top.parentNode.classList.contains('active'))
+                    top.parentNode.classList.remove('active');
+                else
+                    top.parentNode.classList.add('active');
+            });
+        });
+    </script>
+{% endblock %}

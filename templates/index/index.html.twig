@@ -1,7 +1,60 @@
 {% extends 'base.html.twig' %}
 
+{% set title = 'Bienvenue' %}
+
 {% block body %}
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-</div>
+<main id="user">
+    <div class="container diagnostics">
+        <div class="head">
+            <div class="logo">
+                <img src="" alt="logo scaleChanger">
+            </div>
+            <h1 class="title">Vos diagnostiques</h1>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Diagnostique</th>
+                    <th>Date</th>
+                    <th class="small center">status</th>
+                    <th class="small center">Participer</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for participation in participations %}
+                <tr>
+                    <td>{{ participation.diagnostic.name }}</td>
+                    <td>{{ participation.createdAt|date('d-m-Y') }}</td>
+                    {% if participation.done %}
+                        <th class="small center">
+                            <img class="icon disabled" src="{{ asset('img/icon/check.png') }}" alt="status">
+                        </th>
+                        <td class="small center">
+                            <img class="icon disabled" src="{{ asset('img/icon/edit.png') }}" alt="run">
+                        </td>
+                    {% else %}
+                        <th class="small center">
+                            <img class="icon disabled" src="{{ asset('img/icon/wait.png') }}" alt="status">
+                        </th>
+                        <td class="small center">
+                            <a href="{{ path('participation_start', {participation: participation.id}) }}">
+                                <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    <table style="margin-top: 50px;">
+                        <tr>
+                            <td style="text-align: center;">Aucun diagnostique actuellement</td>
+                        </tr>
+                    </table>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
 {% endblock %}
