@@ -24,28 +24,36 @@
 
 {% if id < 10 %}
     <div class="qlink disabled">
-        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)"></label>
-        Le résultat dépendra de la réponse à la question&nbsp;
-        <input type="number" name="qlink[]" min="0" placeholder="N°" disabled>
-        &nbsp;si le résultat de celle-ci est&nbsp;
+        <label class="activate">Activer QLink&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)"></label>
+        Le score dépendra de la réponse à la question&nbsp;
+        <select name="qlink[]" class="questions" autocomplete="off" disabled>
+            {% for q in diagnostic.questions %}
+                <option value="{{ q.id }}">{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+            {% endfor %}
+        </select>
+        &nbsp;si le score de celle-ci est&nbsp;
         <select name="qlink[]" disabled>
-            <option value="">...</option>
             <option value="&gt;">&gt;</option>
             <option value="&lt;">&lt;</option>
             <option value="&gt;=">&gt;=</option>
             <option value="&lt;=">&lt;=</option>
             <option value="==">==</option>
         </select>
-        &nbsp;au résultat de la question actuelle.
+        &nbsp;au score de la question actuelle.<br>
+        Imposer un score pour la question actuelle&nbsp;?&nbsp;
+        <input type="number" name="qlink[]" min="0" max="{{ id == 3 or id == 4 ? '1' : '99' }}" value="0" disabled>
     </div>
 
     <div class="qnext disabled">
-        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)"></label>
+        <label class="activate">Activer QNext&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)"></label>
         On appelera la question&nbsp;
-        <input type="number" name="qnext[]" min="0" placeholder="N°" disabled>
-        &nbsp;si le résultat à la question actuelle est&nbsp;
+        <select name="qnext[]" class="questions" autocomplete="off" disabled>
+            {% for q in diagnostic.questions %}
+                <option value="{{ q.id }}">{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+            {% endfor %}
+        </select>
+        &nbsp;si le score à la question actuelle est&nbsp;
         <select name="qnext[]" disabled>
-            <option value="">...</option>
             <option value="&gt;">&gt;</option>
             <option value="&lt;">&lt;</option>
             <option value="&gt;=">&gt;=</option>
@@ -53,7 +61,7 @@
             <option value="==">==</option>
         </select>
         &nbsp;à&nbsp;
-        <input type="number" name="qnext[]" min="0" placeholder="score" disabled>
+        <input type="number" name="qnext[]" min="0" value="0" disabled>
     </div>
 
     <div class="factors">

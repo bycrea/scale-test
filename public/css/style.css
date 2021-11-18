@@ -50,14 +50,61 @@ input[type="submit"] {
 }
 
 
-
 /* ---- USER - INDEX ---- */
 #user .head .logo {
     width: 100%;
-    min-height: 10vh;
+    min-height: 25vh;
     text-align: center;
 }
 
+#user .head .logo img {
+    width: 250px;
+    padding: 2em;
+}
+
+
+/* ---- USER - LOGIN ---- */
+#user .login {
+    width: 50%;
+    text-align: center;
+}
+
+#user .login .title {
+    width: 100%;
+    text-align: center;
+}
+
+#user .login form {
+    width: 100%;
+}
+
+#user .login form > *{
+    width: 50%;
+    max-width: 300px;
+    min-width: 200px;
+    padding: 10px;
+    text-align: left;
+}
+
+#user .login form > input{
+    margin-bottom: 1em;
+}
+
+#user .login form button[type="submit"] {
+    width: 30%;
+    max-width: 200px;
+    margin-top: 1em;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    color: whitesmoke;
+    background-color: #214475;
+}
+
+#user .login form button[type="submit"]:hover {
+    color: white;
+    background-color: #D91455;
+}
 
 
 /* ---- USER - PARTICIPATION ---- */
@@ -235,8 +282,10 @@ input[type="submit"] {
     margin-bottom: 15vh;
 }
 
+.container form select:disabled,
 .container form input:disabled{
     background-color: whitesmoke;
+    color: #AAAAAA;
 }
 
 
@@ -363,6 +412,7 @@ input[type="submit"] {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    flex-wrap: wrap;
     border-bottom: 2px solid whitesmoke;
     cursor: pointer;
 }
@@ -381,6 +431,10 @@ input[type="submit"] {
     max-width: 50px;
     margin-left: 10px;
     margin-right: 5px;
+}
+
+#admin .container.diagnostics form .top input[name*="global-label"] {
+    max-width: 100px;
 }
 
 #admin .container.diagnostics form .category .questions {
@@ -425,10 +479,16 @@ input[type="submit"] {
 #admin .container.diagnostics form .questions table td.qlink input,
 #admin .container.diagnostics form .questions table td.qnext input,
 #admin .container.diagnostics form .questions table td.factor input{
-    width: 30px;
+    min-width: 30px;
+    width: calc(100%/12);
     font-size: 12px;
     padding: 2px;
     text-align: center;
+}
+
+#admin .container.diagnostics form .questions table td.qlink input,
+#admin .container.diagnostics form .questions table td.qnext input {
+    min-width: 60px;
 }
 
 #admin .container.diagnostics .questions .question.add {
@@ -561,6 +621,12 @@ input[type="submit"] {
     width: 50px;
     padding: 5px;
 }
+
+#admin .container.diagnostics .create .qlink select.questions,
+#admin .container.diagnostics .create .qnext select.questions {
+    width: 100px;
+}
+
 
 #admin .container.question {
     width: 50%;

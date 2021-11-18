@@ -83,15 +83,26 @@ class Question
     private $lastUpdate;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $rang;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $activated;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="questions")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Diagnostic::class, inversedBy="questions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $diagnostic;
 
 
     const ANSWERTYPES = [
@@ -112,6 +123,7 @@ class Question
     public function __construct()
     {
         $this->required   = true;
+        $this->activated  = true;
         $this->createdAt  = new \DateTime();
         $this->lastUpdate = new \DateTime();
     }
@@ -283,9 +295,21 @@ class Question
         return $this->rang;
     }
 
-    public function setRang(int $rang): self
+    public function setRang(?int $rang): self
     {
         $this->rang = $rang;
+
+        return $this;
+    }
+
+    public function getActivated(): ?bool
+    {
+        return $this->activated;
+    }
+
+    public function setActivated(bool $activated): self
+    {
+        $this->activated = $activated;
 
         return $this;
     }
@@ -298,6 +322,18 @@ class Question
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getDiagnostic(): ?Diagnostic
+    {
+        return $this->diagnostic;
+    }
+
+    public function setDiagnostic(?Diagnostic $diagnostic): self
+    {
+        $this->diagnostic = $diagnostic;
 
         return $this;
     }

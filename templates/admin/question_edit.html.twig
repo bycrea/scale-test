@@ -9,12 +9,10 @@
         <div class="container diagnostics">
             <div class="head">
                 <h1 class="title">{{ question is defined ? "Question N°" ~ question.id : "Nouvelle question" }}</h1>
-                <a href="{{ path('admin_diagnostic_edit', {diagnostic: diagnosticId}) }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
-
-                <h2 class="infos">Catégorie : {{ category.name }}</h2>
+                <a href="{{ path('admin_diagnostic_edit', {diagnostic: diagnostic.id}) }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
             </div>
 
-            <form action="{{ path('admin_question_edit', {diagnosticId: diagnosticId, category: category.id, question: question is defined ? question.id : null}) }}" method="post">
+            <form action="{{ path('admin_question_edit', {diagnostic: diagnostic.id, category: category.id, question: question is defined ? question.id : null}) }}" method="post">
                 <div class="create">
 
                     <label for="ask">Question<sup>*</sup></label>
@@ -22,6 +20,19 @@
 
                     <label for="helper">Aide</label>
                     <textarea id="helper" name="helper" rows="10">{{ question is defined ? question.helper : '' }}</textarea>
+
+                    <label for="category"></label>
+                    <select name="category" id="category">
+                        {% if question is defined %}
+                            {% for c in categories %}
+                                <option value="{{ c.id }}" {{ question.category.id == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            {% for c in categories %}
+                                <option value="{{ c.id }}" {{ category.id == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
 
                     <label for="required">Réponse exigé&nbsp;&nbsp;&nbsp;
                         <input type="checkbox" id="required" name="required" value="true" {{ question is defined ? (question.required ? 'checked' : '') : 'checked' }}>
@@ -54,9 +65,12 @@
 {% block javascripts %}
     <script>
         document.getElementById('answerType').addEventListener('change', (e) => {
-            fetch('{{ path('admin_anwser_create') }}/' + e.target.selectedOptions[0].value)
+            // TODO save answers
+
+            fetch('{{ path('admin_anwser_create', {diagnostic: diagnostic.id}) }}/' + e.target.selectedOptions[0].value)
             .then((r) => r.text()).then(content => {
                 document.getElementById('answers').innerHTML = content;
+                // TODO re-inject answers
             });
         });
         document.getElementById('answerType').value = {{ question is defined ? question.answerType : '""' }};

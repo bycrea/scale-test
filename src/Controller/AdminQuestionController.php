@@ -19,43 +19,48 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminQuestionController extends AbstractController
 {
     /**
-     * @Route("/new/{diagnosticId}/{category}", name="new", methods={"GET", "POST"})
+     * @Route("/new/{diagnostic}/{category}", name="new", methods={"GET", "POST"})
      * @throws Exception
      */
-    public function newQuestion($diagnosticId, Category $category, Request $request, EntityManagerInterface $em): Response
+    public function newQuestion(Diagnostic $diagnostic, Category $category, Request $request, EntityManagerInterface $em): Response
     {
         return $this->render('admin/question_edit.html.twig', [
             'active'       => 'diagnostics',
-            'diagnosticId' => $diagnosticId,
+            'diagnostic'   => $diagnostic,
             'category'     => $category,
+            'categories'   => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC']),
             'answerTypes'  => Question::ANSWERTYPES
         ]);
     }
 
 
     /**
-     * @Route("/edit/{diagnosticId}/{category}/{question}", name="edit", defaults={"question": "null"}, methods={"GET", "POST"})
+     * @Route("/edit/{diagnostic}/{category}/{question}", name="edit", defaults={"question": "null"}, methods={"GET", "POST"})
      */
-    public function editQuestion($diagnosticId, Category $category, ?Question $question, Request $request, EntityManagerInterface $em): Response
+    public function editQuestion(Diagnostic $diagnostic, Category $category, ?Question $question, Request $request, EntityManagerInterface $em): Response
     {
         if($request->getMethod() === "POST") {
             try {
                 $r = $request->request;
+                $newCategory = $em->getRepository(Category::class)->find($r->get('category'));
+                $isNewCat    = $newCategory !== $category;
 
+                // NOTE save basics
                 $question = $question ?? new Question();
                 $question
                     ->setLastUpdate(new \DateTime())
                     ->setAsk($r->get('ask'))
                     ->setHelper($r->get('helper'))
+                    ->setCategory($newCategory)
                     ->setRequired($r->get('required', false) == 'true')
                     ->setAnswerType($r->get('answerType'))
-                    ->setCategory($category)
                     ->setCategoryFactor($r->get('categoryFactor', 0))
                     ->setGlobalFactor($r->get('globalFactor', 0))
-                    ->setQlink($r->get('qlink', []))
-                    ->setQnext($r->get('qnext', []))
-                    ->setRang($question->getRang() ?? $em->getRepository(Question::class)->count([]) + 1);
+                    ->setQlink($r->get('qlink', null))
+                    ->setQnext($r->get('qnext', null))
+                    ->setDiagnostic($diagnostic);
 
+                // NOTE save answers
                 $answers = [];
                 $scores  = $r->get('scores', []);
                 foreach ($r->get('answers', []) as $key => $answer) $answers[$key] = ['answer' => $answer, 'score' => $scores[$key]];
@@ -63,11 +68,35 @@ class AdminQuestionController extends AbstractController
 
                 $em->persist($question);
                 $em->flush();
+
+                // NOTE IF new question OR newCategory => re-order rang for all questions
+                if($question->getRang() === null || $isNewCat)
+                {
+                    $lastInCat = $em->getRepository(Question::class)->lastInCat($diagnostic, $question);
+                    $question->setRang($lastInCat ? $lastInCat->getRang() + 1 : 1);
+                    $em->persist($question);
+                    $em->flush();
+
+                    $i = 1;
+                    $categories = $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC']);
+                    foreach ($categories as $c)
+                    {
+                        $questions = $em->getRepository(Question::class)->findBy(['diagnostic' => $diagnostic, 'category' => $c], ['rang' => 'ASC']);
+                        foreach ($questions as $q)
+                        {
+                            $q->setRang($i);
+                            $em->persist($q);
+                            $i++;
+                        }
+                    }
+                    $em->flush();
+                }
+
             } catch (Exception $e) {
                 throw new Exception($e);
             }
 
-            return $this->redirectToRoute('admin_diagnostic_edit', ['diagnostic' => $diagnosticId]);
+            return $this->redirectToRoute('admin_diagnostic_edit', ['diagnostic' => $diagnostic->getId()]);
         }
 
         $response   = $this->forward('App\Controller\AdminAnswerController::editAnswerType', ['question'  => $question->getId()]);
@@ -75,55 +104,60 @@ class AdminQuestionController extends AbstractController
 
         return $this->render('admin/question_edit.html.twig', [
             'active'       => 'diagnostics',
-            'diagnosticId' => $diagnosticId,
+            'diagnostic'   => $diagnostic,
             'category'     => $question->getCategory(),
             'answerTypes'  => Question::ANSWERTYPES,
             'question'     => $question,
+            'categories'   => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC']),
             'answerHTML'   => $answerHTML
         ]);
     }
+
 
     /**
      * @Route("/delete/{question}", name="delete", methods={"GET", "POST"})
      */
     public function deleteQuestion(Question $question, Request $request, EntityManagerInterface $em): Response
     {
+        $diagnostic = $question->getDiagnostic();
+        $participations = $diagnostic->getParticipations()->count();
+
         if($request->getMethod() === "POST") {
 
             // NOTE delete question
             $em->remove($question);
             $em->flush();
 
-            // NOTE reOrder category's questions rang
-            $questions = $em->getRepository(Question::class)->findBy(['category' => $question->getCategory()], ['rang' => 'ASC']);
+            // NOTE re-order questions rang
+            $questions = $em->getRepository(Question::class)->findBy(['diagnostic' => $diagnostic], ['rang' => 'ASC']);
             for ($i=0; $i<count($questions); $i++) {
                 $questions[$i]->setRang($i + 1);
                 $em->persist($questions[$i]);
             }
-
             $em->flush();
 
             return $this->redirect($request->request->get('referrer'));
         }
 
-        $diagnostics  = $em->getRepository(Diagnostic::class)->findAll();
-        $countQinDiag = 0;
-        $countQinPart = 0;
-
-        foreach ($diagnostics as $diagnostic) {
-            if (in_array($question->getId(), $diagnostic->getQuestions())) {
-                $countQinDiag += 1;
-                $countQinPart += $diagnostic->getParticipations()->count();
-            }
-        }
-
         return $this->render('admin/question_delete.html.twig', [
             'active'         => 'diagnostics',
             'question'       => $question,
-            'diagnostics'    => $countQinDiag,
-            'participations' => $countQinPart,
+            'participations' => $participations,
             'referrer'       => $request->server->get('HTTP_REFERER')
         ]);
+    }
+
+    /**
+     * @Route("/toggle/{question}", name="toggle", methods={"PATCH"})
+     * @throws Exception
+     */
+    public function toggleQuestion(Question $question, EntityManagerInterface $em): Response
+    {
+        $question->setActivated(!$question->getActivated());
+        $em->persist($question);
+        $em->flush();
+
+        return new JsonResponse(true);
     }
 
     /**
@@ -134,10 +168,13 @@ class AdminQuestionController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        foreach ($data as $id => $rang)
+        foreach ($data['order'] as $id => $rang)
         {
             $question = $em->getRepository(Question::class)->find($id);
             if($question === null) throw new Exception("Wrong param id : $id", 400);
+
+            if($question->getId() == $data['dragged'] && $question->getCategory()->getId() !== $data['newCategory'])
+                $question->setCategory( $em->getRepository(Category::class)->find($data['newCategory']) );
 
             $question->setRang($rang);
             $em->persist($question);

@@ -32,11 +32,6 @@ class Diagnostic
     /**
      * @ORM\Column(type="array")
      */
-    private $questions = [];
-
-    /**
-     * @ORM\Column(type="array")
-     */
     private $categoriesScales = [];
 
     /**
@@ -59,12 +54,19 @@ class Diagnostic
      */
     private $participations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Question::class, mappedBy="diagnostic", orphanRemoval=true)
+     * @ORM\OrderBy({"rang" = "ASC"})
+     */
+    private $questions;
+
 
     public function __construct()
     {
         $this->createdAt      = new \DateTime();
         $this->lastUpdate     = new \DateTime();
         $this->participations = new ArrayCollection();
+        $this->questions = new ArrayCollection();
     }
 
 
@@ -93,18 +95,6 @@ class Diagnostic
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-
-        return $this;
-    }
-
-    public function getQuestions(): ?array
-    {
-        return $this->questions;
-    }
-
-    public function setQuestions(array $questions): self
-    {
-        $this->questions = $questions;
 
         return $this;
     }
@@ -181,6 +171,36 @@ class Diagnostic
             // set the owning side to null (unless already changed)
             if ($participation->getDiagnostic() === $this) {
                 $participation->setDiagnostic(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Question[]
+     */
+    public function getQuestions(): Collection
+    {
+        return $this->questions;
+    }
+
+    public function addQuestion(Question $question): self
+    {
+        if (!$this->questions->contains($question)) {
+            $this->questions[] = $question;
+            $question->setDiagnostic($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestion(Question $question): self
+    {
+        if ($this->questions->removeElement($question)) {
+            // set the owning side to null (unless already changed)
+            if ($question->getDiagnostic() === $this) {
+                $question->setDiagnostic(null);
             }
         }
 

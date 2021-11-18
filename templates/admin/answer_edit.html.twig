@@ -19,29 +19,37 @@
 {% if id < 10 %}
     {% set isQLink = question.qlink is not empty %}
     <div class="qlink {{ isQLink ? '' : 'disabled' }}">
-        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQLink ? 'checked' : '' }}></label>
-        Le résultat dépendra de la réponse à la question&nbsp;
-        <input type="number" name="qlink[]" min="0" value="{{ isQLink ? question.qlink[0] : '' }}" {{ isQLink ? '' : 'disabled' }}>
-        &nbsp;si le résultat de celle-ci est&nbsp;
+        <label class="activate">Activer QLink&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQLink ? 'checked' : '' }}></label>
+        Le score dépendra de la réponse à la question&nbsp;
+        <select name="qlink[]" class="questions" autocomplete="off" {{ isQLink ? '' : 'disabled' }}>
+            {% for q in diagnostic.questions %}
+                <option value="{{ q.id }}" {{ isQLink and question.qlink[0] == q.id ? 'selected' : '' }}>{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+            {% endfor %}
+        </select>
+        &nbsp;si le score de celle-ci est&nbsp;
         <select name="qlink[]" {{ isQLink ? '' : 'disabled' }}>
-            <option value="">...</option>
             <option value="&gt;" {{ isQLink and question.qlink[1] == ">" ? 'selected' : '' }}>&gt;</option>
             <option value="&lt;" {{ isQLink and question.qlink[1] == "<" ? 'selected' : '' }}>&lt;</option>
             <option value="&gt;=" {{ isQLink and question.qlink[1] == ">=" ? 'selected' : '' }}>&gt;=</option>
             <option value="&lt;=" {{ isQLink and question.qlink[1] == "<=" ? 'selected' : '' }}>&lt;=</option>
             <option value="==" {{ isQLink and question.qlink[1] == "==" ? 'selected' : '' }}>==</option>
         </select>
-        &nbsp;au résultat de la question actuelle.
+        &nbsp;au score de la question actuelle.<br>
+        Imposer un score pour la question actuelle&nbsp;?&nbsp;
+        <input type="number" name="qlink[]" min="0" max="{{ id == 3 or id == 4 ? '1' : '99' }}" value="{{ isQLink ? question.qlink[2] : '0' }}" {{ isQLink ? '' : 'disabled' }}>
     </div>
 
     {% set isQNext = question.qnext is not empty %}
     <div class="qnext {{ isQNext ? '' : 'disabled' }}">
-        <label class="activate">Activer&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQNext ? 'checked' : '' }}></label>
+        <label class="activate">Activer QNext&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQNext ? 'checked' : '' }}></label>
         On appelera la question&nbsp;
-        <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[0] : '' }}" {{ isQNext ? '' : 'disabled' }}>
+        <select name="qnext[]" class="questions" autocomplete="off" {{ isQNext ? '' : 'disabled' }}>
+            {% for q in diagnostic.questions %}
+                <option value="{{ q.id }}" {{ isQNext and question.qnext[0] == q.id ? 'selected' : '' }}>{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+            {% endfor %}
+        </select>
         &nbsp;si le résultat à la question actuelle est&nbsp;
         <select name="qnext[]" {{ isQNext ? '' : 'disabled' }}>
-            <option value="">...</option>
             <option value="&gt;" {{ isQNext and question.qnext[1] == ">" ? 'selected' : '' }}>&gt;</option>
             <option value="&lt;" {{ isQNext and question.qnext[1] == "<" ? 'selected' : '' }}>&lt;</option>
             <option value="&gt;=" {{ isQNext and question.qnext[1] == ">=" ? 'selected' : '' }}>&gt;=</option>
@@ -49,7 +57,7 @@
             <option value="==" {{ isQNext and question.qnext[1] == "==" ? 'selected' : '' }}>==</option>
         </select>
         &nbsp;à&nbsp;
-        <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[2] : '' }}" {{ isQNext ? '' : 'disabled' }}>
+        <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[2] : '0' }}" {{ isQNext ? '' : 'disabled' }}>
     </div>
 
     <div class="factors">

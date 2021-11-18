@@ -19,68 +19,71 @@
                 <input type="hidden" name="comment" value="{{ diagnostic.comment }}">
 
                 {% for key, category in categories %}
-                    <div class="category {{ lastUpdate == category ? 'active' : '' }}" data-category-id="{{ category.id }}">
+                    <div class="category {{ lastUpdate == category.id ? 'active' : '' }}" data-category-id="{{ category.id }}">
                         <div class="top">
                             <h2 class="name sn">{{ category.name }}</h2>
                             <label for="level-1">
-                                Niveaux&nbsp;:&nbsp;1&nbsp;
+                                &nbsp;Débutant&nbsp;
                                 <input id="level-1" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][0] ?? 0 }}">&nbsp;%
                             </label>
                             <label for="level-2">
-                                &nbsp;2&nbsp;
+                                &nbsp;Avancé&nbsp;
                                 <input id="level-2" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][1] ?? 0 }}">&nbsp;%
                             </label>
                             <label for="level-3">
-                                &nbsp;3&nbsp;
-                                <input id="level-3" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][2] ?? 0 }}">&nbsp;%
+                                &nbsp;Expert&nbsp;
+                                <input id="level-3" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][2] ?? 100 }}">&nbsp;%
                             </label>
                         </div>
 
                         <div class="questions">
                             <table>
                                 <tbody>
-                                    {% for question in category.questions %}
-                                        <tr class="question" data-category="{{ category.id }}" data-id="{{ question.id }}" data-rang="{{ question.rang }}">
-                                            <td class="x-small checkbox">
-                                                <input type="checkbox" name="{{ category.id }}-questions[]" autocomplete="off"
-                                                       value="{{ question.id }}" {{ question.id in diagnostic.questions ? 'checked="true"' : "" }}
-                                                >
-                                            </td>
-                                            <td class="x-small">Q{{ question.id }}</td>
-                                            <td class="small center">
-                                                <img class="icon move" src="{{ asset('img/icon/up-down.png') }}" alt="move">
-                                            </td>
-                                            <td><span title="{{ question.helper }}">{{ question.ask }}</span></td>
-                                            <td>{{ constant('ANSWERTYPES', question)[question.answerType]['label'] }}</td>
-                                            <td class="small">
-                                                Oblig.&nbsp;<input type="checkbox" disabled {{ question.required ? 'checked="true"' : "" }}>
-                                            </td>
-                                            <td class="small qlink">
-                                                QLink&nbsp;<input type="text" disabled value="{{ question.qlink is not empty ? question.qlink[0] ~ question.qlink[1] ~ question.id : '--' }}">
-                                            </td>
-                                            <td class="small qnext">
-                                                QNext&nbsp;<input type="text" disabled value="{{ question.qnext is not empty ? question.qnext[0] ~ question.qnext[1] ~ question.qnext[2] : '--' }}">
-                                            </td>
-                                            <td class="x-small">Facteurs&nbsp;:&nbsp;</td>
-                                            <td class="small factor">Catg.&nbsp;<input type="text" disabled value="{{ question.categoryFactor }}"></td>
-                                            <td class="small factor">Global&nbsp;<input type="text" disabled value="{{ question.globalFactor }}"></td>
-                                            <td class="small center">
-                                                <a href="{{ path('admin_question_edit', {diagnosticId: diagnostic.id, category: category.id, question: question.id}) }}">
-                                                    <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
-                                                </a>
-                                            </td>
-                                            <td class="small center">
-                                                <a href="{{ path('admin_question_delete', {question: question.id}) }}">
-                                                    <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
-                                                </a>
-                                            </td>
-                                        </tr>
+                                    {% for question in diagnostic.questions %}
+                                        {% if question.category == category %}
+                                            <tr class="question" data-id="{{ question.id }}" data-rang="{{ question.rang }}" data-category="{{ category.id }}" >
+                                                <td class="x-small checkbox">
+                                                    <input type="checkbox" name="toggle" autocomplete="off" value="{{ question.id }}" {{ question.activated ? 'checked="true"' : "" }}>
+                                                </td>
+                                                <td class="x-small">Q{{ question.id }}</td>
+                                                <td class="small center">
+                                                    <img class="icon move" src="{{ asset('img/icon/up-down.png') }}" alt="move">
+                                                </td>
+                                                <td><span title="{{ question.helper }}">{{ question.ask }}</span></td>
+                                                <td>{{ constant('ANSWERTYPES', question)[question.answerType]['label'] }}</td>
+                                                <td class="small">
+                                                    Oblig.&nbsp;<input type="checkbox" disabled {{ question.required ? 'checked="true"' : "" }}>
+                                                </td>
+                                                <td class="small qlink">
+                                                    {% set QID   = question.id %}
+                                                    {% set QLink = question.qlink %}
+                                                    QLink&nbsp;<input type="text" disabled value="{{ QLink is not empty ? "Q" ~ QLink[0] ~ QLink[1] ~ "Q" ~ QID ~ "=" ~ (QLink[2] is not empty ? QLink[2] : "Q" ~ QID ) : "--" }}">
+                                                </td>
+                                                <td class="small qnext">
+                                                    {% set QNext = question.qnext %}
+                                                    QNext&nbsp;<input type="text" disabled value="{{ QNext is not empty ? "Q" ~ QID ~ QNext[1] ~ QNext[2] ~ "=>Q" ~ QNext[0]: '--' }}">
+                                                </td>
+                                                <td class="x-small">Pond.&nbsp;</td>
+                                                <td class="small factor">Catg.&nbsp;<input type="text" disabled value="{{ question.categoryFactor }}"></td>
+                                                <td class="small factor">Global&nbsp;<input type="text" disabled value="{{ question.globalFactor }}"></td>
+                                                <td class="small center">
+                                                    <a href="{{ path('admin_question_edit', {diagnostic: diagnostic.id, category: category.id, question: question.id}) }}">
+                                                        <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
+                                                    </a>
+                                                </td>
+                                                <td class="small center">
+                                                    <a href="{{ path('admin_question_delete', {question: question.id}) }}">
+                                                        <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
                                     {% endfor %}
                                 </tbody>
                             </table>
 
                             <div class="question add">
-                                <span>Ajouter une question&nbsp;</span><a href="{{ path('admin_question_new', {diagnosticId: diagnostic.id, category: category.id}) }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
+                                <span>Ajouter une question&nbsp;</span><a href="{{ path('admin_question_new', {diagnostic: diagnostic.id, category: category.id}) }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
                             </div>
                         </div>
                     </div>
@@ -88,18 +91,22 @@
 
                 <div class="global">
                     <div class="top">
-                        <h2 class="name">Global</h2>
+                        <h2 class="name">Global</h2><p class="infos">(label & pourcentage)</p>
                         <label for="level-1">
-                            Niveaux&nbsp;:&nbsp;1&nbsp;
-                            <input id="level-1" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[0] ?? 0 }}">&nbsp;%
+                            1.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[0]['label'] ?? 'amorçage' }}">&nbsp;
+                            <input id="level-1" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[0]['scale'] ?? 0 }}">&nbsp;%
                         </label>
                         <label for="level-2">
-                            &nbsp;2&nbsp;
-                            <input id="level-2" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[1] ?? 0 }}">&nbsp;%
+                            2.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[1]['label'] ?? 'consolidation' }}">&nbsp;
+                            <input id="level-2" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[1]['scale'] ?? 0 }}">&nbsp;%
                         </label>
                         <label for="level-3">
-                            &nbsp;3&nbsp;
-                            <input id="level-3" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[2] ?? 0 }}">&nbsp;%
+                            3.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[2]['label'] ?? 'accélération' }}">&nbsp;
+                            <input id="level-3" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[2]['scale'] ?? 0 }}">&nbsp;%
+                        </label>
+                        <label for="level-4">
+                            4.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[3]['label'] ?? 'expension' }}">&nbsp;
+                            <input id="level-4" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[3]['scale'] ?? 100 }}">&nbsp;%
                         </label>
                     </div>
                 </div>
@@ -112,12 +119,28 @@
 
 {% block javascripts %}
     <script>
+        // NOTE change name && comment
         document.querySelectorAll('[data-name]').forEach(data => {
             data.addEventListener('keyup', () => {
                 document.querySelector('form input[name="' + data.dataset.name + '"]').value = data.innerText;
             });
         });
 
+        // NOTE toggle activated
+        document.querySelectorAll('input[name="toggle"]').forEach(i => {
+            i.addEventListener('change', (e) => {
+               let id = i.parentNode.parentNode.dataset.id;
+               fetch('/admin/question/toggle/' + id, {
+                   method: "PATCH"
+               })
+                    .catch((e) => {
+                        console.error(e);
+                        alert('Une erreur s\'est produite, veuillez recommencer.');
+                    });
+            });
+        });
+
+        // NOTE handle drag&drop rang
         let dragged = null;
         let over = null;
         let isUp = null;
@@ -160,11 +183,14 @@
                 const undoCat = document.querySelectorAll('tr.question[data-category="' + dragged.dataset.category + '"');
                 isUp ? over.parentNode.insertBefore(dragged, over) : over.parentNode.insertBefore(dragged, over.nextSibling);
 
-                let data = {};
-                document.querySelectorAll('tr.question[data-category="' + dragged.dataset.category + '"').forEach((e, k) => {
+                let data = {order: {}};
+                document.querySelectorAll('tr.question').forEach((e, k) => {
                     e.dataset.rang = (k+1).toString();
-                    data[e.dataset.id] = e.dataset.rang;
+                    data.order[e.dataset.id] = e.dataset.rang;;
                 });
+
+                data['dragged'] = dragged.dataset.id;
+                data['newCategory'] = over.dataset.category;
 
                 fetch('/admin/question/move', {
                     method: "PATCH",
@@ -183,15 +209,30 @@
             over = null;
         }
 
-        document.querySelectorAll('.category .top').forEach(top => {
+        // NOTE toggle develop categories
+        let alt = false;
+        window.addEventListener('keydown', (e) => {if(e.key === "Alt") alt = true});
+        window.addEventListener('keyup', (e) => {if(e.key === "Alt") alt = false});
+
+        let categoriesTop = document.querySelectorAll('.category .top');
+        categoriesTop.forEach(top => {
             top.addEventListener('click', (e) => {
+                let parentClass = top.parentNode.classList;
+                if(alt === true) {
+                    let state = parentClass.contains('active') ? 'remove' : 'add';
+                    categoriesTop.forEach(el => {
+                        el.parentNode.classList[state]('active');
+                    });
+                    return;
+                }
+
                 if(e.target.tagName === 'INPUT') return false;
                 if(typeof top.parentNode === "undefined" || !top.parentNode.classList.contains('category')) return false;
 
-                if(top.parentNode.classList.contains('active'))
-                    top.parentNode.classList.remove('active');
+                if(parentClass.contains('active'))
+                    parentClass.remove('active');
                 else
-                    top.parentNode.classList.add('active');
+                    parentClass.add('active');
             });
         });
     </script>

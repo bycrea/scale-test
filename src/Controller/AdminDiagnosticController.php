@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Diagnostic;
 use App\Entity\Question;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,6 +41,7 @@ class AdminDiagnosticController extends AbstractController
 
     /**
      * @Route("/edit/{diagnostic}", name="edit", methods={"GET", "POST"})
+     * @throws NonUniqueResultException
      */
     public function editDiagnostic(Diagnostic $diagnostic, Request $request, EntityManagerInterface $em): Response
     {
@@ -48,27 +50,22 @@ class AdminDiagnosticController extends AbstractController
         if($request->getMethod() === "POST") {
             $r = $request->request;
 
-            $questions = [];
             $categoriesScales = [];
             foreach ($categories as $category) {
                 $cId = $category->getId();
-
-                // NOTE Get questions
-                if ($r->get("$cId-questions") !== null)
-                    foreach ($r->get("$cId-questions") as $qId) $questions[] = intval($qId);
-
                 // NOTE Get categories' scales
                 if ($r->get("$cId-scales") !== null)
                     $categoriesScales[$cId] = $r->get("$cId-scales");
             }
 
-            // NOTE Get global' scales
-            $globalScales = $r->get('global-scales');
+            // NOTE Get global' label & scale
+            $globalScales = [];
+            foreach ($r->get('global-label') as $key => $label)
+                $globalScales[] = ['label' => $label, 'scale' => $r->get('global-scales')[$key]];
 
             $diagnostic
                 ->setName($r->get('name'))
                 ->setComment($r->get('comment'))
-                ->setQuestions($questions)
                 ->setCategoriesScales($categoriesScales)
                 ->setGlobalScale((array)$globalScales)
                 ->setLastUpdate(new \DateTime());
@@ -77,12 +74,15 @@ class AdminDiagnosticController extends AbstractController
             $em->flush();
         }
 
+        // NOTE Get last update Catg. from question
+        $lastUpdate = $em->getRepository(Question::class)->getLastUpdate($diagnostic);
+        $lastUpdate = $lastUpdate !== null ? $lastUpdate->getCategory()->getId() : 1;
 
         return $this->render('admin/diagnostic_edit.html.twig', [
             'active'     => 'diagnostics',
             'diagnostic' => $diagnostic,
             'categories' => $categories,
-            'lastUpdate' => ($em->getRepository(Question::class)->getLastUpdate())->getCategory()
+            'lastUpdate' => $lastUpdate
         ]);
     }
 

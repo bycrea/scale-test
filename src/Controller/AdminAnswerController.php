@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Diagnostic;
 use App\Entity\Question;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,13 +17,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminAnswerController extends AbstractController
 {
     /**
-     * @Route("/create/{id}", name="create", defaults={"id": null})
+     * @Route("/create/{diagnostic}/{id}", name="create", defaults={"id": null})
      */
-    public function createAnswerType(?string $id): Response
+    public function createAnswerType(Diagnostic $diagnostic, ?string $id): Response
     {
         if(NULL === $id) return new Response("", 200);
 
         return $this->render('admin/answer_create.html.twig', [
+            'diagnostic' => $diagnostic,
             'id'         => $id,
             'answerType' => Question::ANSWERTYPES[$id]
         ]);
@@ -34,6 +36,7 @@ class AdminAnswerController extends AbstractController
     public function editAnswerType(Question $question): Response
     {
         return $this->render('admin/answer_edit.html.twig', [
+            'diagnostic' => $question->getDiagnostic(),
             'id'         => $question->getAnswerType(),
             'answerType' => Question::ANSWERTYPES[$question->getAnswerType()],
             'question'   => $question
