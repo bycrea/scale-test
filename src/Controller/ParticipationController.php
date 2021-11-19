@@ -57,35 +57,43 @@ class ParticipationController extends AbstractController
         if($participation->getUser() !== $this->getUser())
             $error = true;
 
-        $questions = $participation->getDiagnostic()->getQuestions();
 
         // NOTE Save answer & meta
         if($request->getMethod() === "POST") {
             $actualQuestion = $em->getRepository(Question::class)->find($request->request->get('question'));
             $participation->setAnswers($this->updateAnswers($request->request, $actualQuestion, $participation->getAnswers()));
 
-            $participation->setMeta($this->updateMeta($participation, $actualQuestion, $questions));
+            // NOTE nextQuestion
+            $participation = $this->getNextQuestion($participation, $actualQuestion);
+
+            // NOTE Update meta
+            if(!isset($participation->getMeta()['start'])) $participation->updateMeta('start', (new \DateTime())->getTimestamp());
+            $participation->updateMeta('time', (new \DateTime())->setTimestamp($participation->getMeta()['start'])->diff(new \DateTime()));
+
             $participation->setLastUpdate(new \DateTime());
+
+            // TODO remove
+            $participation->updateMeta('lastScore', $this->scoringService->getAnswerScore($actualQuestion, $participation));
 
             $em->persist($participation);
             $em->flush();
         }
 
-        $nextQuestion = $participation->getMeta()['initiate'] ?? $questions[0];
-        $nextQuestion = $em->getRepository(Question::class)->find($nextQuestion);
+        $nextQuestions = $em->getRepository(Question::class)->getNextQuestion($participation->getDiagnostic(), $actualQuestion ?? null);
+        $nextQuestion  = $participation->getMeta()['initiate'] ?? (!empty($nextQuestions) ? $nextQuestions[0] : null);
 
-        if($nextQuestion === null) {
+        if($nextQuestion === false) {
             $participation->setDone(true);
             $em->persist($participation);
             $em->flush();
         } else {
-            if(!isset($participation->getMeta()['total']))
-                $participation->setMeta(['total' => count($questions), 'left' => count($questions)]);
+            $participation->updateMeta('total', $em->getRepository(Question::class)->countQuestions($participation->getDiagnostic()));
+            $participation->updateMeta('left', count($nextQuestions));
 
             // NOTE build next question
             $html = $this->renderView('participation/question_create.html.twig', [
                 'participation' => $participation,
-                'question'      => $nextQuestion
+                'question'      => $em->getRepository(Question::class)->find($nextQuestion)
             ]);
         }
 
@@ -97,19 +105,22 @@ class ParticipationController extends AbstractController
 
 
     /**
-     * @Route("/over/{participation}", name="over", methods={"GET"})
+     * @Route("/over-view/{participation}", name="over-view", methods={"GET"})
      */
     public function overParticipation(Participation $participation, Request $request, EntityManagerInterface $em): Response
     {
-        foreach ($participation->getAnswers() as $q => $answer)
-            dump($this->scoringService->getAnswerScore($em->getRepository(Question::class)->find($q), $participation));
-
-        dd($participation->getMeta());
-
         if($participation->getUser() !== $this->getUser())
             return $this->redirectToRoute('index');
 
-        // TODO diagnostic is over
+        if($participation->getDone() === true) {
+            $this->scoringService->getScoresUser($participation);
+        }
+
+        //dd($participation->getDiagnostic()->getQuestions());
+
+        return $this->render('participation/over-view.html.twig', [
+            'participation' => $participation
+        ]);
     }
 
 
@@ -122,57 +133,29 @@ class ParticipationController extends AbstractController
         return $answers;
     }
 
-    private function updateMeta(Participation $participation, Question $question, array $questions): array
-    {
-        $meta = $participation->getMeta();
 
-        // TODO remove
-        $meta['lastScore'] = $this->scoringService->getAnswerScore($question, $participation);
-
-        // NOTE Get total
-        if(!isset($meta['total'])) $meta['total'] = count($questions);
-
-        // NOTE nextQuestion question
-        $this->getNextQuestion($participation, $question, $questions, $meta);
-
-        // NOTE Get questions left
-        $meta['left'] = count($questions);
-
-        // NOTE time spend
-        if(!isset($meta['start'])) $meta['start'] = (new \DateTime())->getTimestamp();
-        $meta['time'] = (new \DateTime())->setTimestamp($meta['start'])->diff(new \DateTime());
-
-        return $meta;
-    }
-
-    private function getNextQuestion(Participation $participation, Question $question, array &$questions, array &$meta): void
+    private function getNextQuestion(Participation $participation, Question $question): Participation
     {
         // NOTE Call QNext
         if(!empty($question->getQnext()) && $this->scoringService->getQNextValidation($question, $participation) !== false)
         {
             // NOTE set pending as initiate
             if(!isset($participation->getMeta()['pending']))
-                $meta['pending'] = $meta['initiate'];
+                $participation->updateMeta('pending', $participation->getMeta()['initiate']);
 
-            $meta['initiate'] = $question->getQnext()[0];
-            return;
+            $participation->updateMeta('initiate', $question->getQnext()[0]);
+            return $participation;
         }
         // NOTE OR call pending (question QNext originator)
         else if(isset($participation->getMeta()['pending']))
         {
             $question = $this->em->getRepository(Question::class)->find($participation->getMeta()['pending']);
-            unset($meta['pending']);
+            $participation->unsetMeta('pending');
         }
 
-        // NOTE Get next question after $question in $questions array
-        foreach ($questions as $key => $q) {
-            unset($questions[$key]);
-            if($q === $question->getId()) {
-                $meta['initiate'] = $questions[$key + 1] ?? false;
-                return;
-            }
-        }
+        $nextQuestions = $this->em->getRepository(Question::class)->getNextQuestion($question->getDiagnostic(), $question);
+        $participation->updateMeta('initiate', !empty($nextQuestions) ? $nextQuestions[0]->getId() : false);
 
-        $meta['initiate'] = false;
+        return $participation;
     }
 }

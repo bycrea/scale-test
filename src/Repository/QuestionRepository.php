@@ -54,4 +54,38 @@ class QuestionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @param Diagnostic $diagnostic
+     * @return int
+     */
+    public function countQuestions(Diagnostic $diagnostic): int
+    {
+        return count($this->createQueryBuilder('q')
+            ->andwhere('q.diagnostic = :diag')
+            ->setParameter('diag', $diagnostic)
+            ->andWhere('q.activated = 1')
+            ->getQuery()
+            ->getArrayResult());
+    }
+
+    /**
+     * @param Diagnostic $diagnostic
+     * @param Question|null $question
+     * @return array
+     */
+    public function getNextQuestion(Diagnostic $diagnostic, ?Question $question): array
+    {
+        $rang = $question ? $question->getRang() : 0;
+
+        return $this->createQueryBuilder('q')
+            ->andwhere('q.diagnostic = :diag')
+            ->setParameter('diag', $diagnostic)
+            ->andWhere('q.rang > :rang')
+            ->setParameter('rang', $rang)
+            ->andWhere('q.activated = 1')
+            ->orderBy('q.rang', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

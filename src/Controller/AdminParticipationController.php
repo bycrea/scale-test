@@ -25,11 +25,13 @@ class AdminParticipationController extends AbstractController
         if($request->getMethod() === "POST") {
             $r = $request->request;
 
-            $participation = (new Participation())
-                ->setUser($em->getRepository(User::class)->find($r->get('user')))
-                ->setDiagnostic($em->getRepository(Diagnostic::class)->find($r->get('diagnostic')));
+            foreach ($r->get('users') as $user)
+                foreach ($r->get('diagnostics') as $diagnostic) {
+                    $participation = (new Participation())->setUser($em->getRepository(User::class)->find($user))
+                        ->setDiagnostic($em->getRepository(Diagnostic::class)->find($diagnostic));
+                    $em->persist($participation);
+                }
 
-            $em->persist($participation);
             $em->flush();
 
             return $this->redirectToRoute('admin_participations');

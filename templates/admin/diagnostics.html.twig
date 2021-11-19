@@ -19,6 +19,7 @@
                         <th>Nom</th>
                         <th>Commentaire</th>
                         <th class="small center">Modif.</th>
+                        <th class="small center">Copier</th>
                         <th class="small center">Suppr.</th>
                     </tr>
                 </thead>
@@ -31,6 +32,11 @@
                             <td class="small center">
                                 <a href="{{ path('admin_diagnostic_edit', {diagnostic: diagnostic.id}) }}">
                                     <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
+                                </a>
+                            </td>
+                            <td class="small center">
+                                <a href="{{ path('admin_diagnostic_copy', {diagnostic: diagnostic.id}) }}">
+                                    <img class="icon" src="{{ asset('img/icon/copy.png') }}" alt="copy">
                                 </a>
                             </td>
                             <td class="small center">

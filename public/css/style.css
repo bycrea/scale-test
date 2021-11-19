@@ -32,6 +32,12 @@ input[type="submit"] {
     cursor: pointer;
 }
 
+input[readonly] {
+    width: auto !important;
+    max-width: 80px;
+    user-select: none;
+}
+
 .icon {
     object-fit: cover;
     cursor: pointer;
@@ -49,11 +55,16 @@ input[type="submit"] {
     user-select: none !important;
 }
 
+.alert {
+    padding: 10px 0;
+    color: #b42723;
+}
+
 
 /* ---- USER - INDEX ---- */
 #user .head .logo {
     width: 100%;
-    min-height: 25vh;
+    min-height: 20vh;
     text-align: center;
 }
 
@@ -491,6 +502,11 @@ input[type="submit"] {
     min-width: 60px;
 }
 
+#admin .container.diagnostics form .questions table td.qlink.isQLinked input,
+#admin .container.diagnostics form .questions table td.qnext.isQNexted input {
+    background-color: greenyellow;
+}
+
 #admin .container.diagnostics .questions .question.add {
     width: 100%;
     display: flex;
@@ -509,6 +525,18 @@ input[type="submit"] {
 
 #admin .container.diagnostics form .global {
     margin-top: 2em;
+}
+
+#admin .container.diagnostics.question .recap .participations{
+    margin-top: 10px;
+}
+
+#admin .container.diagnostics.question .recap .participations strong{
+    margin-left: 80px;
+}
+
+#admin .container.diagnostics.question .recap .questions strong{
+    margin-left: 108px;
 }
 
 
@@ -673,10 +701,6 @@ input[type="submit"] {
     margin-bottom: 50px;
 }
 
-#admin .container.participations form label {
-    margin-bottom: 10px;
-}
-
 #admin .container.participations form .switch {
     display: flex;
     justify-content: space-between;
@@ -685,9 +709,16 @@ input[type="submit"] {
     margin-bottom: 10px;
 }
 
-#admin .container.participations form .switch label > input {
+#admin .container.participations form .switch input {
+    margin-left: 5px;
+}
+
+#admin .container.participations form .switch input[name="search"] {
+    min-width: 300px;
+    padding: 2px 5px;
     margin-left: 10px;
 }
+
 
 #admin .container.participations form label[for="username"] {
     margin-left: auto;

@@ -36,7 +36,7 @@
         </select>
         &nbsp;au score de la question actuelle.<br>
         Imposer un score pour la question actuelle&nbsp;?&nbsp;
-        <input type="number" name="qlink[]" min="0" max="{{ id == 3 or id == 4 ? '1' : '99' }}" value="{{ isQLink ? question.qlink[2] : '0' }}" {{ isQLink ? '' : 'disabled' }}>
+        <input type="number" name="qlink[]" min="0" max="99" value="{{ isQLink ? question.qlink[2] : '0' }}" {{ isQLink ? '' : 'disabled' }}>
     </div>
 
     {% set isQNext = question.qnext is not empty %}

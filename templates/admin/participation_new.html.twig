@@ -16,17 +16,17 @@
                 <div class="create">
                     <div class="switch">
                         <label for="user">Choisir un utilisateur</label>
+                        <input type="text" name="search" placeholder="rechercher">
 
                         <label for="username">Noms<input id="username" type="radio" name="switch-search" value="username" checked></label>
                         <label for="email">Email<input id="email" type="radio" name="switch-search" value="email"></label>
                     </div>
-                    <select name="user" id="user">
+                    <select name="users[]" id="user" multiple required>
                         {{ include('admin/participation_switch_username.html.twig') }}
                     </select>
 
                     <label for="diagnostic">Associer un diagnostique</label>
-                    <select name="diagnostic" id="diagnostic">
-                        <option value="">...</option>
+                    <select name="diagnostics[]" id="diagnostic" multiple required>
                         {% for diagnostic in diagnostics %}
                             <option value="{{ diagnostic.id }}">{{ diagnostic.name }}</option>
                         {% endfor %}
@@ -41,6 +41,15 @@
 
 {% block javascripts %}
     <script>
+        document.querySelector('input[name="search"]').addEventListener('keyup', e => {
+            let input = e.target.value;
+            document.querySelectorAll('select[name="users[]"] option').forEach(o => {
+                if(o.innerText.search(input) === -1) o.style.display = "none";
+                else if(input === "") o.style.display = "block";
+                else o.style.display = "block";
+            });
+        });
+
         document.querySelectorAll('input[name="switch-search"]').forEach(i => {
             i.addEventListener('change', e => {
                 fetch('/admin/participation/switch/' + e.target.value)

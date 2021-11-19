@@ -23,6 +23,12 @@ class AdminDiagnosticController extends AbstractController
     public function newDiagnostic(Request $request, EntityManagerInterface $em): Response
     {
         if($request->getMethod() === "POST") {
+            if($em->getRepository(Diagnostic::class)->findBy(['name' => $request->request->get('name')]) !== null)
+                return $this->render('admin/diagnostic_new.html.twig', [
+                    'active'    => 'diagnostics',
+                    'error'     => 'Ce nom existe déjà'
+                ]);
+
             $diagnostic = (new Diagnostic())
                 ->setName($request->request->get('name'))
                 ->setComment($request->request->get('comment'));
@@ -34,7 +40,7 @@ class AdminDiagnosticController extends AbstractController
         }
 
         return $this->render('admin/diagnostic_new.html.twig', [
-            'active'     => 'diagnostics'
+            'active'    => 'diagnostics'
         ]);
     }
 
@@ -78,12 +84,49 @@ class AdminDiagnosticController extends AbstractController
         $lastUpdate = $em->getRepository(Question::class)->getLastUpdate($diagnostic);
         $lastUpdate = $lastUpdate !== null ? $lastUpdate->getCategory()->getId() : 1;
 
+        // NOTE Get QLinked & QNexted questions
+        $isQLinked = $isQNexted = [];
+        foreach ($diagnostic->getQuestions() as $q)
+        {
+            if(!empty($QLink = $q->getQlink()))
+                $isQLinked[] = $em->getRepository(Question::class)->find($QLink[0])->getId();
+
+            if(!empty($QNext = $q->getQnext()))
+                $isQNexted[] = $em->getRepository(Question::class)->find($QNext[0])->getId();
+        }
+
         return $this->render('admin/diagnostic_edit.html.twig', [
             'active'     => 'diagnostics',
             'diagnostic' => $diagnostic,
             'categories' => $categories,
-            'lastUpdate' => $lastUpdate
+            'lastUpdate' => $lastUpdate,
+            'isQLinked'  => $isQLinked,
+            'isQNexted'  => $isQNexted
         ]);
+    }
+
+
+    /**
+     * @Route("/copy/{diagnostic}", name="copy", methods={"GET"})
+     */
+    public function copyDiagnostic(Diagnostic $diagnostic, EntityManagerInterface $em): Response
+    {
+        $newDiagnostic = (new Diagnostic())
+            ->setName($diagnostic->getName() . " copy")
+            ->setCategoriesScales($diagnostic->getCategoriesScales())
+            ->setGlobalScale($diagnostic->getGlobalScale());
+
+        foreach ($diagnostic->getQuestions() as $question)
+        {
+            $clone = clone $question;
+            $clone->unsetId()->setDiagnostic($newDiagnostic)->setCreatedAt(new \DateTime())->setLastUpdate(new \DateTime());
+            $em->persist($clone);
+        }
+
+        $em->persist($newDiagnostic);
+        $em->flush();
+
+        return $this->redirectToRoute('admin_diagnostics');
     }
 
 

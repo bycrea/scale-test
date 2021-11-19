@@ -19,19 +19,20 @@
                 <input type="hidden" name="comment" value="{{ diagnostic.comment }}">
 
                 {% for key, category in categories %}
+                    {% set MATURITY = constant('CATEGORY_MATURITY', diagnostic) %}
                     <div class="category {{ lastUpdate == category.id ? 'active' : '' }}" data-category-id="{{ category.id }}">
                         <div class="top">
                             <h2 class="name sn">{{ category.name }}</h2>
                             <label for="level-1">
-                                &nbsp;Débutant&nbsp;
+                                &nbsp;{{ MATURITY[0] }}&nbsp;
                                 <input id="level-1" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][0] ?? 0 }}">&nbsp;%
                             </label>
                             <label for="level-2">
-                                &nbsp;Avancé&nbsp;
+                                &nbsp;{{ MATURITY[1] }}&nbsp;
                                 <input id="level-2" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][1] ?? 0 }}">&nbsp;%
                             </label>
                             <label for="level-3">
-                                &nbsp;Expert&nbsp;
+                                &nbsp;{{ MATURITY[2] }}&nbsp;
                                 <input id="level-3" type="number" step="1" min="0" max="100" name="{{ category.id }}-scales[]" value="{{ diagnostic.categoriesScales[category.id][2] ?? 100 }}">&nbsp;%
                             </label>
                         </div>
@@ -41,9 +42,16 @@
                                 <tbody>
                                     {% for question in diagnostic.questions %}
                                         {% if question.category == category %}
-                                            <tr class="question" data-id="{{ question.id }}" data-rang="{{ question.rang }}" data-category="{{ category.id }}" >
+                                            <tr class="question"
+                                                data-id="{{ question.id }}" data-rang="{{ question.rang }}" data-category="{{ category.id }}"
+                                                    title="{{ question.id in isQLinked ? 'QLinked' : (question.id in isQNexted ? 'QNexted' : '') }}"
+                                            >
                                                 <td class="x-small checkbox">
-                                                    <input type="checkbox" name="toggle" autocomplete="off" value="{{ question.id }}" {{ question.activated ? 'checked="true"' : "" }}>
+                                                    <input type="checkbox" name="toggle" autocomplete="off"
+                                                       value="{{ question.id }}"
+                                                        {{ question.activated or question.id in isQLinked or question.id in isQNexted ? 'checked' : "" }}
+                                                           {{ question.id in isQLinked or question.id in isQNexted ? 'disabled' : '' }}
+                                                    >
                                                 </td>
                                                 <td class="x-small">Q{{ question.id }}</td>
                                                 <td class="small center">
@@ -54,18 +62,18 @@
                                                 <td class="small">
                                                     Oblig.&nbsp;<input type="checkbox" disabled {{ question.required ? 'checked="true"' : "" }}>
                                                 </td>
-                                                <td class="small qlink">
+                                                <td class="small qlink {{ question.id in isQLinked ? 'isQLinked' : '' }}">
                                                     {% set QID   = question.id %}
                                                     {% set QLink = question.qlink %}
-                                                    QLink&nbsp;<input type="text" disabled value="{{ QLink is not empty ? "Q" ~ QLink[0] ~ QLink[1] ~ "Q" ~ QID ~ "=" ~ (QLink[2] is not empty ? QLink[2] : "Q" ~ QID ) : "--" }}">
+                                                    QLink&nbsp;<input type="text" readonly value="{{ QLink is not empty ? "Q" ~ QLink[0] ~ QLink[1] ~ "Q" ~ QID ~ "=" ~ (QLink[2] is not empty ? QLink[2] : "Q" ~ QID ) : "--" }}">
                                                 </td>
-                                                <td class="small qnext">
+                                                <td class="small qnext {{ question.id in isQNexted ? 'isQNexted' : '' }}">
                                                     {% set QNext = question.qnext %}
-                                                    QNext&nbsp;<input type="text" disabled value="{{ QNext is not empty ? "Q" ~ QID ~ QNext[1] ~ QNext[2] ~ "=>Q" ~ QNext[0]: '--' }}">
+                                                    QNext&nbsp;<input type="text" readonly value="{{ QNext is not empty ? "Q" ~ QID ~ QNext[1] ~ QNext[2] ~ "=>Q" ~ QNext[0]: '--' }}">
                                                 </td>
                                                 <td class="x-small">Pond.&nbsp;</td>
-                                                <td class="small factor">Catg.&nbsp;<input type="text" disabled value="{{ question.categoryFactor }}"></td>
-                                                <td class="small factor">Global&nbsp;<input type="text" disabled value="{{ question.globalFactor }}"></td>
+                                                <td class="small factor">Catg.&nbsp;<input type="text" readonly value="{{ question.categoryFactor }}"></td>
+                                                <td class="small factor">Global&nbsp;<input type="text" readonly value="{{ question.globalFactor }}"></td>
                                                 <td class="small center">
                                                     <a href="{{ path('admin_question_edit', {diagnostic: diagnostic.id, category: category.id, question: question.id}) }}">
                                                         <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
@@ -90,22 +98,23 @@
                 {% endfor %}
 
                 <div class="global">
+                    {% set GLOBAL_MATURITY = constant('GLOBAL_DEFAULT_MATURITY', diagnostic) %}
                     <div class="top">
                         <h2 class="name">Global</h2><p class="infos">(label & pourcentage)</p>
                         <label for="level-1">
-                            1.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[0]['label'] ?? 'amorçage' }}">&nbsp;
+                            1.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[0]['label'] ?? GLOBAL_MATURITY[0] }}" required>&nbsp;
                             <input id="level-1" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[0]['scale'] ?? 0 }}">&nbsp;%
                         </label>
                         <label for="level-2">
-                            2.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[1]['label'] ?? 'consolidation' }}">&nbsp;
+                            2.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[1]['label'] ?? GLOBAL_MATURITY[1] }}" required>&nbsp;
                             <input id="level-2" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[1]['scale'] ?? 0 }}">&nbsp;%
                         </label>
                         <label for="level-3">
-                            3.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[2]['label'] ?? 'accélération' }}">&nbsp;
+                            3.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[2]['label'] ?? GLOBAL_MATURITY[2] }}" required>&nbsp;
                             <input id="level-3" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[2]['scale'] ?? 0 }}">&nbsp;%
                         </label>
                         <label for="level-4">
-                            4.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[3]['label'] ?? 'expension' }}">&nbsp;
+                            4.&nbsp;<input type="text" name="global-label[]" value="{{ diagnostic.globalScale[3]['label'] ?? GLOBAL_MATURITY[3] }}" required>&nbsp;
                             <input id="level-4" type="number" step="1" min="0" max="100" name="global-scales[]" value="{{ diagnostic.globalScale[3]['scale'] ?? 100 }}">&nbsp;%
                         </label>
                     </div>

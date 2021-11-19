@@ -66,6 +66,18 @@ class AdminQuestionController extends AbstractController
                 foreach ($r->get('answers', []) as $key => $answer) $answers[$key] = ['answer' => $answer, 'score' => $scores[$key]];
                 $question->setAnswers($answers);
 
+                // NOTE Inactivate Nexted question
+                if(!empty($QNext = $question->getQnext())) {
+                    $nexted = ($em->getRepository(Question::class)->find($QNext[0]))->setActivated(false);
+                    $em->persist($nexted);
+                }
+
+                // NOTE Activate Linked question
+                if(!empty($QLink = $question->getQlink())) {
+                    $linked = ($em->getRepository(Question::class)->find($QLink[0]))->setActivated(true);
+                    $em->persist($linked);
+                }
+
                 $em->persist($question);
                 $em->flush();
 
@@ -109,7 +121,8 @@ class AdminQuestionController extends AbstractController
             'answerTypes'  => Question::ANSWERTYPES,
             'question'     => $question,
             'categories'   => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC']),
-            'answerHTML'   => $answerHTML
+            'answerHTML'   => $answerHTML,
+            'error'        => $request->getMethod() === "PATCH" ? $request->request->get('error') : null
         ]);
     }
 

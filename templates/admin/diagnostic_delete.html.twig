@@ -18,12 +18,10 @@
                 <div class="recap">
                     <h2 class="title">Diagnostique : {{diagnostic.name }}</h2>
                     <p><i>{{ diagnostic.comment }}</i></p>
-
-                    <h2 class="title">Utilisé dans :</h2>
-                    <p><i>- {{ participations }} participations</i></p>
-                    {% if participations > 0 %}
-                        <p class="alert">NB : toutes ces participations seront supprimées !</p>
-                    {% endif %}
+                    <p class="participations">Ce diagnostique est connecté à <strong>{{ participations }}</strong>&nbsp;<i>participation(s)</i></p>
+                    <p class="questions">Ce diagnostique comprend <strong>{{ diagnostic.questions|length }}</strong>&nbsp;<i>questions(s)</i></p>
+                    <br>
+                    <p class="alert">NB : toutes ces participations & questions seront supprimées !</p>
                 </div>
 
                 <input type="submit" value="Supprimer définitivement ?">

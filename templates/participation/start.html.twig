@@ -58,7 +58,7 @@
                 .then(r => r.json())
                 .then(json => {
                     if(json.done === true) {
-                        location.href = '/participation/over/{{ participation.id }}';
+                        location.href = '/participation/over-view/{{ participation.id }}';
                     } else {
                         importDiv.innerHTML = json.html;
                     }

@@ -105,6 +105,9 @@ class Question
     private $diagnostic;
 
 
+    // NOTE use to store results
+    public $results;
+
     const ANSWERTYPES = [
         // inf. 10 == specials
         1 => ['label' => "Sélection unique",                'type' => "radio",      'method' => null],
@@ -132,6 +135,13 @@ class Question
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function unsetId(): self
+    {
+        $this->id = null;
+
+        return $this;
     }
 
     public function getAsk(): ?string

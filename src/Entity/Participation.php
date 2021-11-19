@@ -117,6 +117,26 @@ class Participation
         return $this;
     }
 
+    public function updateMeta($key, $data): self
+    {
+        $meta = $this->getMeta();
+
+        $meta[$key] = $data;
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function unsetMeta($key): self
+    {
+        $meta = $this->getMeta();
+
+        unset($meta[$key]);
+        $this->meta = $meta;
+
+        return $this;
+    }
+
     public function getDone(): ?bool
     {
         return $this->done;

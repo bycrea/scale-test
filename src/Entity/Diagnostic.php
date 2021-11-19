@@ -6,6 +6,7 @@ use App\Repository\DiagnosticRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=DiagnosticRepository::class)
@@ -21,6 +22,7 @@ class Diagnostic
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Unique()
      */
     private $name;
 
@@ -61,12 +63,15 @@ class Diagnostic
     private $questions;
 
 
+    CONST CATEGORY_MATURITY = ["Débutant", "Avancé", "Expert"];
+    CONST GLOBAL_DEFAULT_MATURITY = ["Amorçage", "Consolidation", "Accélération", "Expension"];
+
     public function __construct()
     {
         $this->createdAt      = new \DateTime();
         $this->lastUpdate     = new \DateTime();
         $this->participations = new ArrayCollection();
-        $this->questions = new ArrayCollection();
+        $this->questions      = new ArrayCollection();
     }
 
 

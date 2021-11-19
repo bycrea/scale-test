@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Résultat - ' ~ participation.diagnostic.name %}
+
+{% block body %}
+    <main id="user">
+        <div class="container diagnostics">
+            <div class="head">
+                <div class="logo">
+                    <img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger">
+                </div>
+                <h1 class="title">Vos résultat pour : {{ participation.diagnostic.name }}</h1>
+            </div>
+
+            {% if participation.done == false %}
+                <table>
+                    <thead>
+                        <tr>
+                            <td style="text-align: center;">
+                                Vous n'avez pas terminé le questionnaire,
+                                cliquez pour reprendre :<br>
+                                <a href="{{ path('participation_start', {participation: participation.id}) }}">
+                                    <button style="margin-top: 20px; padding: 10px; cursor: pointer;">Go !</button>
+                                </a>
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+            {% else %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Questions</th>
+                            <th>réponses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for question in participation.diagnostic.questions %}
+                        {% if question.activated %}
+                            <tr>
+                                <td>{{ question.ask }}</td>
+                                <td>...</td>
+                            </tr>
+                        {% endif %}
+                    {% else %}
+                        <tr>
+                            <table style="margin-top: 50px;">
+                                <tr>
+                                    <td style="text-align: center;">Une erreur est survenue...</td>
+                                </tr>
+                            </table>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

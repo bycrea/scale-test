@@ -18,7 +18,7 @@
                     <th>Diagnostique</th>
                     <th>Date</th>
                     <th class="small center">status</th>
-                    <th class="small center">Participer</th>
+                    <th class="small center">action</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,16 +30,18 @@
                         <th class="small center">
                             <img class="icon disabled" src="{{ asset('img/icon/check.png') }}" alt="status">
                         </th>
-                        <td class="small center">
-                            <img class="icon disabled" src="{{ asset('img/icon/edit.png') }}" alt="run">
+                        <td class="small center" title="voir">
+                            <a href="{{ path('participation_over-view', {participation: participation.id}) }}">
+                                <img class="icon" src="{{ asset('img/icon/see.png') }}" alt="see">
+                            </a>
                         </td>
                     {% else %}
                         <th class="small center">
                             <img class="icon disabled" src="{{ asset('img/icon/wait.png') }}" alt="status">
                         </th>
-                        <td class="small center">
+                        <td class="small center" title="commencer">
                             <a href="{{ path('participation_start', {participation: participation.id}) }}">
-                                <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">
+                                <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="start">
                             </a>
                         </td>
                     {% endif %}
