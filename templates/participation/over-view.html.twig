@@ -33,7 +33,7 @@
                             {% for question in participation.diagnostic.questions %}
                                 {% if question.category == category and question.activated %}
                                     {% set questionAnwsers = participation.answers[question.id] is defined ? participation.answers[question.id] : [] %}
-                                    <tr>
+                                    <tr class="user">
                                         <td class="ask">{{ question.ask }}</td>
                                         <td>
                                             {% for key, answer in question.answers %}

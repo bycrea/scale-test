@@ -94,6 +94,12 @@ input[type="radio"]:checked {
     background-color: #a2c5f7;
 }
 
+#user input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    box-shadow:0 0 5px 0 #3b89ee inset;
+    background-color: #a2c5f7;
+}
+
 #admin input[type="checkbox"]:disabled:checked,
 #admin input[type="radio"]:disabled:checked {
     border: 2px solid #515151;
@@ -280,12 +286,25 @@ input[type="radio"]:checked {
     color: #42739f;
 }
 
-#user .diagnostics table tr td {
+#user .diagnostics table tr.user td {
     width: calc(100%/2);
 }
 
-#user .diagnostics table tr td.ask {
-    width: 60%;
+#user .diagnostics table tr.user td.ask {
+    width: 50%;
+}
+
+#user .diagnostics table tr.admin td {
+    width: calc(100%/3);
+    min-width: 200px;
+}
+
+#user .diagnostics table tr.admin td.ask {
+    width: 40%;
+}
+
+#user .diagnostics table tr.admin td.type {
+    max-width: 5%;
 }
 
 #user .diagnostics table td i {

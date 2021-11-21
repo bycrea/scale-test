@@ -27,7 +27,9 @@
                     <thead>
                         <tr>
                             <th>Question</th>
+                            <th>Type de rép.</th>
                             <th>Réponse(s)</th>
+                            <th>Score</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,8 +41,9 @@
                         {% for question in participation.diagnostic.questions %}
                             {% if question.category == category and question.activated %}
                                 {% set questionAnwsers = participation.answers[question.id] is defined ? participation.answers[question.id] : [] %}
-                                <tr>
+                                <tr class="admin">
                                     <td class="ask">{{ question.ask }}</td>
+                                    <td class="type">{{ constant('ANSWERTYPES', question)[question.answerType]['label'] }}</td>
                                     <td>
                                         {% for key, answer in question.answers %}
                                             {% if question.answerType < 10 %}
@@ -52,6 +55,7 @@
                                             <i>{{ questionAnwsers[0] }}</i>
                                         {% endfor %}
                                     </td>
+                                    <td class="type">{{ question.results.score }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
