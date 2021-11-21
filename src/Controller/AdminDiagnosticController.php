@@ -23,7 +23,8 @@ class AdminDiagnosticController extends AbstractController
     public function newDiagnostic(Request $request, EntityManagerInterface $em): Response
     {
         if($request->getMethod() === "POST") {
-            if($em->getRepository(Diagnostic::class)->findBy(['name' => $request->request->get('name')]) !== null)
+            $diagnostic = $em->getRepository(Diagnostic::class)->findBy(['name' => $request->request->get('name')]);
+            if(!empty($diagnostic))
                 return $this->render('admin/diagnostic_new.html.twig', [
                     'active'    => 'diagnostics',
                     'error'     => 'Ce nom existe déjà'

@@ -16,10 +16,10 @@
                 <div class="create">
                     <div class="switch">
                         <label for="user">Choisir un utilisateur</label>
-                        <input type="text" name="search" placeholder="rechercher">
+                        <input type="text" name="search" autocomplete="off" placeholder="rechercher">
 
-                        <label for="username">Noms<input id="username" type="radio" name="switch-search" value="username" checked></label>
-                        <label for="email">Email<input id="email" type="radio" name="switch-search" value="email"></label>
+                        <label for="username">Noms<input id="username" type="radio" name="switch-search" autocomplete="off" value="username" checked></label>
+                        <label for="email">Email<input id="email" type="radio" name="switch-search" autocomplete="off" value="email"></label>
                     </div>
                     <select name="users[]" id="user" multiple required>
                         {{ include('admin/participation_switch_username.html.twig') }}
