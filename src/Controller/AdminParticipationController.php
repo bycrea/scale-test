@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Diagnostic;
 use App\Entity\Participation;
 use App\Entity\User;
+use App\Service\ScoringService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AdminParticipationController extends AbstractController
 {
+    /*** @var ScoringService */
+    private $scoringService;
+
+    public function __construct(ScoringService $scoringService)
+    {
+        $this->scoringService = $scoringService;
+    }
+
     /**
      * @Route("/new", name="new", methods={"GET", "POST"})
      */
@@ -46,12 +55,19 @@ class AdminParticipationController extends AbstractController
 
 
     /**
-     * @Route("/view/{participation}", name="view", methods={"GET"})
+     * @Route("/over-view/{participation}", name="over-view", methods={"GET"})
      */
-    public function viewParticipation(Participation $participation, EntityManagerInterface $em): Response
+    public function overViewParticipation(Participation $participation, EntityManagerInterface $em): Response
     {
-        return $this->render('admin/participation_view.html.twig', [
-            'active'     => 'participation'
+        $this->scoringService->getResults($participation, true);
+
+        $interval = $participation->getMeta()['time'];
+        $participation->updateMeta('time', $interval->d == 0 ? $interval->format('%Hh%im%ss') : $interval->format('%dJours, %Hh%im%ss'));
+
+        return $this->render('admin/participation_over-view.html.twig', [
+            'active'        => 'participation',
+            'participation' => $participation,
+            'categories'    => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC'])
         ]);
     }
 

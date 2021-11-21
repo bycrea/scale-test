@@ -27,9 +27,9 @@
                     <td>{{ participation.diagnostic.name }}</td>
                     <td>{{ participation.createdAt|date('d-m-Y') }}</td>
                     {% if participation.done %}
-                        <th class="small center">
+                        <td class="small center">
                             <img class="icon disabled" src="{{ asset('img/icon/check.png') }}" alt="status">
-                        </th>
+                        </td>
                         <td class="small center" title="voir">
                             <a href="{{ path('participation_over-view', {participation: participation.id}) }}">
                                 <img class="icon" src="{{ asset('img/icon/see.png') }}" alt="see">

@@ -9,49 +9,63 @@
                 <div class="logo">
                     <img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger">
                 </div>
-                <h1 class="title">Vos résultat pour : {{ participation.diagnostic.name }}</h1>
+                <h2 class="title">Vos résultat pour : {{ participation.diagnostic.name }}</h2>
+                {% if participation.done == true and participation.results is defined %}
+                    <p class="infos results"><i>Stade de maturité</i> : <span class="maturity">{{ participation.results.maturity }}</span></p>
+                {% endif %}
             </div>
 
-            {% if participation.done == false %}
+            {% if participation.done == true %}
                 <table>
                     <thead>
                         <tr>
-                            <td style="text-align: center;">
-                                Vous n'avez pas terminé le questionnaire,
-                                cliquez pour reprendre :<br>
-                                <a href="{{ path('participation_start', {participation: participation.id}) }}">
-                                    <button style="margin-top: 20px; padding: 10px; cursor: pointer;">Go !</button>
-                                </a>
-                            </td>
+                            <th>Question</th>
+                            <th>Réponse(s)</th>
                         </tr>
                     </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        {% if category.results.maturity is not null %}
+                            <tr>
+                                {% set maturity = category.results.maturity is not empty ? ' : <span class="maturity">' ~ category.results.maturity ~ '</span>' : "" %}
+                                <td class="category">{{ category.name }}{{ maturity|raw }}</td>
+                            </tr>
+                            {% for question in participation.diagnostic.questions %}
+                                {% if question.category == category and question.activated %}
+                                    {% set questionAnwsers = participation.answers[question.id] is defined ? participation.answers[question.id] : [] %}
+                                    <tr>
+                                        <td class="ask">{{ question.ask }}</td>
+                                        <td>
+                                            {% for key, answer in question.answers %}
+                                                {% if question.answerType < 10 %}
+                                                    <div class="answer">
+                                                        <input type="radio" disabled autocomplete="off" {{ key in questionAnwsers ? 'checked' : '' }}>&nbsp;&nbsp;<label>{{ answer['answer'] }}</label>
+                                                    </div>
+                                                {% endif %}
+                                            {% else %}
+                                                <i>{{ questionAnwsers[0] }}</i>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
                 </table>
             {% else %}
                 <table>
                     <thead>
-                        <tr>
-                            <th>Questions</th>
-                            <th>réponses</th>
-                        </tr>
+                    <tr>
+                        <td style="text-align: center;">
+                            Vous n'avez pas terminé le questionnaire,
+                            cliquez pour reprendre :<br>
+                            <a href="{{ path('participation_start', {participation: participation.id}) }}">
+                                <button style="margin-top: 20px; padding: 10px; cursor: pointer;">Go !</button>
+                            </a>
+                        </td>
+                    </tr>
                     </thead>
-                    <tbody>
-                    {% for question in participation.diagnostic.questions %}
-                        {% if question.activated %}
-                            <tr>
-                                <td>{{ question.ask }}</td>
-                                <td>...</td>
-                            </tr>
-                        {% endif %}
-                    {% else %}
-                        <tr>
-                            <table style="margin-top: 50px;">
-                                <tr>
-                                    <td style="text-align: center;">Une erreur est survenue...</td>
-                                </tr>
-                            </table>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
                 </table>
             {% endif %}
         </div>

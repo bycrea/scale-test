@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Admin' %}
+
+{% block body %}
+    <main id="user">
+        <div class="container diagnostics">
+            <div class="head">
+                <div class="logo">
+                    <img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger">
+                </div>
+
+                <h2 class="title">{{ participation.diagnostic.name }}</h2>
+                {% if participation.done == true and participation.results is defined %}
+                    <p class="infos results"><i>Stade de maturité</i> : <span class="maturity">{{ participation.results.maturity }} ({{ participation.results.percentage }}%)</span></p>
+                {% endif %}
+            </div>
+            <div class="head infos">
+                <p>{{ participation.user.username }} - {{ participation.user.email }} ({{ participation.user.company }})</p>
+                <p>Créé le {{ participation.createdAt|date('d/m/Y H:i') }} <br> MàJ le {{ participation.lastUpdate|date('m/d/Y H:i') }}
+                <p>temps de réponse : {{ participation.meta.time }}</p>
+            </div>
+
+            {% if participation.done == true %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Réponse(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            {% set maturity = category.results.maturity is not empty ? ' : <span class="maturity">' ~ category.results.maturity ~ '</span>' : "-- pas de résultat --" %}
+                            <td class="category">{{ category.name }}{{ maturity|raw }} ({{ category.results.percentage|format_number({fraction_digit:'2'}) }}%)</td>
+                        </tr>
+                        {% for question in participation.diagnostic.questions %}
+                            {% if question.category == category and question.activated %}
+                                {% set questionAnwsers = participation.answers[question.id] is defined ? participation.answers[question.id] : [] %}
+                                <tr>
+                                    <td class="ask">{{ question.ask }}</td>
+                                    <td>
+                                        {% for key, answer in question.answers %}
+                                            {% if question.answerType < 10 %}
+                                                <div class="answer">
+                                                    <input type="radio" disabled autocomplete="off" {{ key in questionAnwsers ? 'checked' : '' }}>&nbsp;&nbsp;<label>{{ answer['answer'] }} -- pts: {{ answer['score'] }}</label>
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            <i>{{ questionAnwsers[0] }}</i>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <table>
+                    <thead>
+                    <tr>
+                        <td style="text-align: center;">
+                            Vous n'avez pas terminé le questionnaire,
+                            cliquez pour reprendre :<br>
+                            <a href="{{ path('participation_start', {participation: participation.id}) }}">
+                                <button style="margin-top: 20px; padding: 10px; cursor: pointer;">Go !</button>
+                            </a>
+                        </td>
+                    </tr>
+                    </thead>
+                </table>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

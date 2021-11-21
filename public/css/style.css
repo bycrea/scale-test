@@ -61,6 +61,41 @@ input[readonly] {
 }
 
 
+/* ------- INPUTS ------- */
+
+input[type="checkbox"],
+input[type="radio"] {
+    -webkit-appearance:none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    outline: none;
+    border: 1px solid #736e6e;
+    box-shadow:0 0 2px 0 #949494 inset;
+    background-color: white;
+}
+
+#admin input[type="checkbox"]:disabled,
+#admin input[type="radio"]:disabled {
+    border: 1px solid #ababab;
+    box-shadow: 0 0 10px 0 #7a7a7a inset;
+    background-color: #fcfcfc !important;
+}
+
+#admin input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    box-shadow:0 0 5px 0 #3b89ee inset;
+    background-color: #a2c5f7;
+}
+
+#admin input[type="checkbox"]:disabled:checked,
+#admin input[type="radio"]:disabled:checked {
+    border: 2px solid #515151;
+    box-shadow: 0 0 5px 0 #565656 inset;
+    background-color: #ea6591 !important;
+}
+
+
 /* ---- USER - INDEX ---- */
 #user .head .logo {
     width: 100%;
@@ -214,6 +249,69 @@ input[readonly] {
 }
 
 #user .participation .category .question label > input {
+}
+
+/* ---- USER - PARTICIPATION - RESULTS ---- */
+#user .container.diagnostics .head.infos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#user .container.diagnostics .head.infos p {
+    margin-bottom: 10px;
+}
+
+#user .diagnostics .infos.results {
+    font-size: 1.2em;
+    text-align: right;
+}
+
+#user .diagnostics .infos.results span {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #42739f;
+}
+
+#user .diagnostics table tr td {
+    width: calc(100%/2);
+}
+
+#user .diagnostics table tr td.ask {
+    width: 60%;
+}
+
+#user .diagnostics table td i {
+    font-weight: normal;
+    font-size: 1.1em;
+    color: black;
+}
+
+#user .diagnostics table td:not(.category) {
+    font-weight: normal;
+    font-size: 1em;
+    color: black;
+    border-bottom: 2px solid whitesmoke;
+}
+
+#user .diagnostics table td.category {
+    width: 60%;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+#user .diagnostics table td .answer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+#user .diagnostics table td .maturity {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #42739f;
 }
 
 
@@ -504,7 +602,8 @@ input[readonly] {
 
 #admin .container.diagnostics form .questions table td.qlink.isQLinked input,
 #admin .container.diagnostics form .questions table td.qnext.isQNexted input {
-    background-color: greenyellow;
+    background-color: #ea6591;
+    box-shadow: 0 0 5px 0 #565656 inset
 }
 
 #admin .container.diagnostics .questions .question.add {

@@ -55,6 +55,10 @@ class Participation
     private $createdAt;
 
 
+    // NOTE use to store results
+    public $results;
+
+
     public function __construct()
     {
         $this->done       = false;

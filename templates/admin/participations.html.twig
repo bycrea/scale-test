@@ -36,7 +36,7 @@
                             <td class="small center">{{ participation.createdAt == participation.lastUpdate ? "--" : participation.lastUpdate|date('d-m-y H:i') }}</td>
                             <td class="small center">
                                 {% if participation.done %}
-                                    <a href="{{ path('admin_participation_view', {participation: participation.id}) }}">
+                                    <a href="{{ path('admin_participation_over-view', {participation: participation.id}) }}">
                                         <img class="icon" src="{{ asset('img/icon/see.png') }}" alt="edit">
                                     </a>
                                 {% else %}

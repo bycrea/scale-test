@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Participation;
 use App\Entity\Question;
 use App\Service\ScoringService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,9 +74,6 @@ class ParticipationController extends AbstractController
 
             $participation->setLastUpdate(new \DateTime());
 
-            // TODO remove
-            $participation->updateMeta('lastScore', $this->scoringService->getAnswerScore($actualQuestion, $participation));
-
             $em->persist($participation);
             $em->flush();
         }
@@ -84,6 +83,7 @@ class ParticipationController extends AbstractController
 
         if($nextQuestion === false) {
             $participation->setDone(true);
+
             $em->persist($participation);
             $em->flush();
         } else {
@@ -113,20 +113,28 @@ class ParticipationController extends AbstractController
             return $this->redirectToRoute('index');
 
         if($participation->getDone() === true) {
-            $this->scoringService->getScoresUser($participation);
+            $this->scoringService->getResults($participation);
+
+            $interval = $participation->getMeta()['time'];
+            $participation->updateMeta('time', $interval->d == 0 ? $interval->format('%Hh%im%ss') : $interval->format('%dJours, %Hh%im%ss'));
         }
 
-        //dd($participation->getDiagnostic()->getQuestions());
-
         return $this->render('participation/over-view.html.twig', [
-            'participation' => $participation
+            'participation' => $participation,
+            'categories'    => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC'])
         ]);
     }
 
 
+    /**
+     * @throws Exception
+     */
     private function updateAnswers(InputBag $inputs, Question $question, array $answers): array
     {
         foreach ($inputs->get('answers') as $answer) {
+            if($question->getAnswerType() == 12 || $question->getAnswerType() == 13)
+                $answer = ( new \DateTime($answer))->format(Question::ANSWERTYPES[$question->getAnswerType()]['method']);
+
             $answers[$question->getId()][] = $answer;
         }
 
