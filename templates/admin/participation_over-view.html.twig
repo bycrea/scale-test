@@ -33,7 +33,7 @@
                     {% for category in categories %}
                         <tr>
                             {% set maturity = category.results.maturity is not empty ? ' : <span class="maturity">' ~ category.results.maturity ~ '</span>' : "-- pas de résultat --" %}
-                            <td class="category">{{ category.name }}{{ maturity|raw }} ({{ category.results.percentage }}%)</td>
+                            <td class="category">{{ category.name }}{{ maturity|raw }} ({{ category.results.percentage == 100 ? category.results.percentage : category.results.percentage|slice(0,4) }}%)</td>
                         </tr>
                         {% for question in participation.diagnostic.questions %}
                             {% if question.category == category and question.activated %}
