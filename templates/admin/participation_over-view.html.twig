@@ -14,6 +14,7 @@
                 {% if participation.done == true and participation.results is defined %}
                     <p class="infos results"><i>Stade de maturité</i> : <span class="maturity">{{ participation.results.maturity }} ({{ participation.results.percentage }}%)</span></p>
                 {% endif %}
+                <a href="{{ path('admin_participations') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
             </div>
             <div class="head infos">
                 <p>{{ participation.user.username }} - {{ participation.user.email }} ({{ participation.user.company }})</p>

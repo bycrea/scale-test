@@ -54,7 +54,7 @@
             i.addEventListener('change', e => {
                 fetch('/admin/participation/switch/' + e.target.value)
                     .then(r => r.text()).then(html => {
-                        document.querySelector('select[name="user"]').innerHTML = html;
+                        document.querySelector('select[name="users[]"]').innerHTML = html;
                     });
             });
         });
