@@ -32,16 +32,6 @@ h3 {
     font-size: 1em;
 }
 
-input[type="submit"] {
-    cursor: pointer;
-}
-
-input[readonly] {
-    width: auto !important;
-    max-width: 80px;
-    user-select: none;
-}
-
 .icon {
     object-fit: cover;
     cursor: pointer;
@@ -67,9 +57,21 @@ input[readonly] {
 
 /* --- INPUTS STYLE --- */
 
+input[type="submit"] {
+    cursor: pointer;
+}
+
+input[readonly] {
+    width: auto !important;
+    max-width: 80px;
+    user-select: none;
+}
+
 input[type="checkbox"],
 input[type="radio"] {
     -webkit-appearance:none;
+    appearance: none;
+    position: relative;
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -747,8 +749,8 @@ input[type="radio"]:checked {
 
 #admin .container.diagnostics .create .qlink select,
 #admin .container.diagnostics .create .qnext select,
-#admin .container.diagnostics .create .qlink input,
-#admin .container.diagnostics .create .qnext input {
+#admin .container.diagnostics .create .qlink input:not([type="checkbox"]),
+#admin .container.diagnostics .create .qnext input:not([type="checkbox"]) {
     width: 50px;
     padding: 5px;
 }
