@@ -54,6 +54,13 @@ h3 {
     color: #b42723;
 }
 
+.backoff {
+    position: absolute;
+    top: 5vh;
+    right: 2vw;
+    color: #3b89ee;
+}
+
 
 /* --- INPUTS STYLE --- */
 

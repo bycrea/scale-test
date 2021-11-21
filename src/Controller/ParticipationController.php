@@ -149,7 +149,7 @@ class ParticipationController extends AbstractController
         {
             // NOTE set pending as initiate
             if(!isset($participation->getMeta()['pending']))
-                $participation->updateMeta('pending', $participation->getMeta()['initiate']);
+                $participation->updateMeta('pending', $participation->getMeta()['initiate'] ?? $participation->getDiagnostic()->getQuestions()[0]);
 
             $participation->updateMeta('initiate', $question->getQnext()[0]);
             return $participation;

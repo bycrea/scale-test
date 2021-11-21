@@ -3,6 +3,12 @@
 {% set title = 'Bienvenue' %}
 
 {% block body %}
+{% if "ROLE_ADMIN" in app.user.roles %}
+    <div class="backoff">
+        <a href="{{ path('admin_index') }}">BackOff</a>
+    </div>
+{% endif %}
+
 <main id="user">
     <div class="container diagnostics">
         <div class="head">

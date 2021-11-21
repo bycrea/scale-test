@@ -19,7 +19,7 @@
             <div class="head infos">
                 <p>{{ participation.user.username }} - {{ participation.user.email }} ({{ participation.user.company }})</p>
                 <p>Créé le {{ participation.createdAt|date('d/m/Y H:i') }} <br> MàJ le {{ participation.lastUpdate|date('m/d/Y H:i') }}
-                <p>temps de réponse : {{ participation.meta.time }}</p>
+                <p>Temps passé : {{ participation.meta.time }}</p>
             </div>
 
             {% if participation.done == true %}
@@ -55,7 +55,7 @@
                                             <i>{{ questionAnwsers[0] }}</i>
                                         {% endfor %}
                                     </td>
-                                    <td class="type">{{ question.results.score }}</td>
+                                    <td class="type">|&nbsp;&nbsp;{{ question.results.score }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}

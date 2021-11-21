@@ -7,7 +7,7 @@
         <div class="container diagnostics">
             <div class="head">
                 <div class="logo">
-                    <img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger">
+                    <a href="{{ path('index') }}"><img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger"></a>
                 </div>
                 <h2 class="title">Vos résultat pour : {{ participation.diagnostic.name }}</h2>
                 {% if participation.done == true and participation.results is defined %}
