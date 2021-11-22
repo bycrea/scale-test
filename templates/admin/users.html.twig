@@ -19,6 +19,7 @@
                         <th>Email</th>
                         <th>Entreprise</th>
                         <th>Créé le</th>
+                        <th>Der. Conn.</th>
                         <th class="small center">Activé</th>
                         <th class="small center">Lien</th>
                         <th class="small center">Modif.</th>
@@ -31,8 +32,11 @@
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.company }}</td>
-                            <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                            <td class="small center"><input type="checkbox" {{ user.activated ? 'checked' : '' }} {{ 'ROLE_ADMIN' in user.roles ? 'disabled' : '' }}></td>
+                            <td>{{ user.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>{{ user.lastConnection is not null ? user.lastConnection|date('d/m/Y H:i') : "--" }}</td>
+                            <td class="small center">
+                                <input type="checkbox" name="activate" value="{{ user.id }}" autocomplete="off" {{ user.activated ? 'checked' : '' }} {{ 'ROLE_ADMIN' in user.roles ? 'disabled' : '' }}>
+                            </td>
                             <td class="small center">
                                 <a href="#" onclick="popLink('{{ app.request.getSchemeAndHttpHost ~ '/login?u=' ~ user.email ~ "&p=" ~ user.accessPassword}}')">
                                     <img class="icon" src="{{ asset('img/icon/link.png') }}" alt="copy">
@@ -72,6 +76,12 @@
             NOTE pop user link
             // TODO fetch new access password
         #}
+
+        document.querySelectorAll('input[name="activate"]').forEach(i => {
+            i.addEventListener('change', (e) => {
+                fetch('/admin/user/toggle/activate/' + i.value).catch(e => console.error(e));
+            });
+        });
 
         let popup = document.querySelector('.pop-link');
         popup.addEventListener('click', closePopLink);

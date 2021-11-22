@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $lastConnection;
 
@@ -77,7 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->roles            = ['ROLE_USER'];
         $this->createdAt        = new \DateTime();
-        $this->lastConnection   = new \DateTime();
         $this->activated        = true;
         $this->participations = new ArrayCollection();
     }

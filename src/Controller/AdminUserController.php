@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -59,6 +60,21 @@ class AdminUserController extends AbstractController
             'active' => 'users',
             'user'   => $user
         ]);
+    }
+
+    /**
+     * @Route("/toggle/activate/{id}", name="toggle_activate", methods={"GET"})
+     * @throws Exception
+     */
+    public function toggleActivateUser(string $id, EntityManagerInterface $em): Response
+    {
+        $user = $em->getRepository(User::class)->find($id);
+        $user->setActivated( !$user->getActivated() );
+
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse(true);
     }
 
     /**
