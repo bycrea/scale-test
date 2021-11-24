@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,10 +16,19 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function index(AuthenticationUtils $authenticationUtils, Request $request): Response
+    public function index(AuthenticationUtils $authenticationUtils, Request $request, EntityManagerInterface $em): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+
+        if($user = $this->getUser())
+        {
+            $user->setLastConnection(new \DateTime());
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('index');
+        }
 
          return $this->render('login/index.html.twig', [
             'last_username' => $lastUsername,

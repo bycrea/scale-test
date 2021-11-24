@@ -13,6 +13,15 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400&display=swap" rel="stylesheet">
     </head>
     <body>
+        {% if app.user %}
+            <div class="backoff">
+                {% if "ROLE_ADMIN" in app.user.roles %}
+                    <a href="{{ path('admin_index') }}">BackOff&nbsp;|&nbsp;</a>
+                {% endif %}
+                <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
         {% block body %}{% endblock %}
     </body>
 

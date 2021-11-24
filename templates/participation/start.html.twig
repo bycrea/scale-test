@@ -75,5 +75,15 @@
         {
             console.log('TODO');
         }
+
+        function eraseAnswers()
+        {
+            document.querySelectorAll('input[name="answers[]"]').forEach(i => {
+                if(i.type === 'checkbox' || i.type === 'radio')
+                    i.checked = false;
+                else
+                    i.value = "";
+            });
+        }
     </script>
 {% endblock %}

@@ -223,6 +223,19 @@ input[type="radio"]:checked {
     background-color: black;
 }
 
+#user .participation .category .clear {
+    float: right;
+    font-weight: normal;
+    font-size: .8em;
+    font-style: italic;
+    color: #736e6e;
+    cursor: pointer;
+}
+
+#user .participation .category .clear:hover {
+    color: #131313;
+}
+
 #user .participation .category .infos {
     width: 100%;
     margin-bottom: 20px;

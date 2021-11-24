@@ -30,7 +30,7 @@ class ScoringService
             // NOTE Get result
             $question->results = [
                 'score'     => $this->getAnswerScore($question, $participation),
-                'scoreMax'  => $this->getAnswerMaxScore($question),
+                'scoreMax'  => $this->getAnswerMaxScore($question, $participation),
                 'answer'    => $participation->getAnswers()[$question->getId()] ?? null
             ];
 
@@ -42,7 +42,7 @@ class ScoringService
 
                 $next->results = [
                     'score'     => $this->getAnswerScore($question, $participation),
-                    'scoreMax'  => $this->getAnswerMaxScore($question),
+                    'scoreMax'  => $this->getAnswerMaxScore($question, $participation),
                     'answer'    => $participation->getAnswers()[$question->getId()] ?? null
                 ];
             }
@@ -178,10 +178,15 @@ class ScoringService
     }
 
 
-    public function getAnswerMaxScore(Question $question): int
+    public function getAnswerMaxScore(Question $question, Participation $participation): int
     {
+        $answers = $participation->getAnswers()[$question->getId()] ?? null;
         $method  = Question::ANSWERTYPES[$question->getAnswerType()]['method'];
         $result  = 0;
+
+        // NOTE unrequired questions need to be answered to count
+        if($question->getRequired() === false && $answers === null)
+            return 0;
 
         if($question->getAnswerType() < 10)
         {
