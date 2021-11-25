@@ -43,7 +43,7 @@
                                                     </div>
                                                 {% endif %}
                                             {% else %}
-                                                <i>{{ questionAnwsers[0] }}</i>
+                                                <i>{{ questionAnwsers[0] is defined ? questionAnwsers[0] : "--" }}</i>
                                             {% endfor %}
                                         </td>
                                     </tr>

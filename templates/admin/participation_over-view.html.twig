@@ -54,10 +54,10 @@
                                                 </div>
                                             {% endif %}
                                         {% else %}
-                                            <i>{{ questionAnwsers[0] }}</i>
+                                            <i>{{ questionAnwsers[0] is defined ? questionAnwsers[0] : "--" }}</i>
                                         {% endfor %}
                                     </td>
-                                    <td class="type">|&nbsp;&nbsp;{{ question.results.score }}/{{ question.results.scoreMax }}</td>
+                                    <td class="type sp">{{ question.results.score }}/{{ question.results.scoreMax }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}

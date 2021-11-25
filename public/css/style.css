@@ -329,6 +329,10 @@ input[type="radio"]:checked {
     max-width: 5%;
 }
 
+#user .diagnostics table tr.admin td.type.sp{
+    border-left: 2px solid whitesmoke;
+}
+
 #user .diagnostics table td i {
     font-weight: normal;
     font-size: 1.1em;

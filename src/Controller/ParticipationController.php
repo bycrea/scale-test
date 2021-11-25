@@ -132,6 +132,8 @@ class ParticipationController extends AbstractController
     private function updateAnswers(InputBag $inputs, Question $question, array $answers): array
     {
         foreach ($inputs->get('answers', []) as $answer) {
+            if(empty($answer)) continue;
+
             if ($question->getAnswerType() == 12 || $question->getAnswerType() == 13)
                 $answer = (new \DateTime($answer))->format(Question::ANSWERTYPES[$question->getAnswerType()]['method']);
 
