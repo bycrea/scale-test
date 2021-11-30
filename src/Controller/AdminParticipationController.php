@@ -6,11 +6,14 @@ use App\Entity\Category;
 use App\Entity\Diagnostic;
 use App\Entity\Participation;
 use App\Entity\User;
+use App\Service\CsvService;
 use App\Service\ScoringService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -59,8 +62,9 @@ class AdminParticipationController extends AbstractController
      */
     public function overViewParticipation(Participation $participation, EntityManagerInterface $em): Response
     {
-        $this->scoringService->getResults($participation, true);
+        if($participation->getDone() === false) return $this->redirectToRoute('admin_participations');
 
+        $this->scoringService->getResults($participation, true);
         $interval = $participation->getMeta()['time'];
         $participation->updateMeta('time', $interval->d == 0 ? $interval->format('%Hh%im%ss') : $interval->format('%dJours, %Hh%im%ss'));
 
@@ -68,6 +72,67 @@ class AdminParticipationController extends AbstractController
             'active'        => 'participation',
             'participation' => $participation,
             'categories'    => $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC'])
+        ]);
+    }
+
+
+    /**
+     * @Route("/download/{participations}", name="download", methods={"GET"}, defaults={"participations": ""})
+     * @throws Exception
+     */
+    public function downloadParticipations(?string $participations, EntityManagerInterface $em): Response
+    {
+        try {
+            $content        = "";
+            $diagnosticId   = null;
+            $categories     = $em->getRepository(Category::class)->findBy([], ['rang' => 'ASC']);
+
+            // NOTE Get participations Entities / bind errors
+            $participations = explode("|", $participations);
+            foreach ($participations as $key => $participation) {
+                $id = $participation;
+                $participation = $em->getRepository(Participation::class)->find($id);
+                if($participation === null || $participation->getDone() === false)
+                    throw new Exception("Error participation n°$id", 400);
+                else
+                    if($diagnosticId !== null && $participation->getDiagnostic()->getId() !== $diagnosticId)
+                        throw new Exception("Error diagnostic : unique diagnostic required", 400);
+                    else
+                        $diagnosticId = $participation->getDiagnostic()->getId();
+
+                $participations[$key] = $participation;
+            }
+
+            // NOTE build CSV header
+            $content .= CsvService::buildHeader($participations[0], $categories) . "\n";
+
+            // NOTE concat participations' lines
+            foreach ($participations as $key => $participation)
+            {
+                $this->scoringService->getResults($participation, true);
+                $interval = $participation->getMeta()['time'];
+                $participation->updateMeta('time', $interval->d == 0 ? $interval->format('%Hh%im%ss') : $interval->format('%dJours, %Hh%im%ss'));
+
+                $content .= CsvService::concatParticipation($participation, $categories);
+                $content .= $key < count($participations) -1 ? "\n" : "";
+            }
+
+        } catch (Exception $e) {
+            //throw new \Exception($e);
+            return new Response($e->getMessage(), 400, [
+                'Content-Type' => 'text/json'
+            ]);
+        }
+
+        // NOTE build file AND return
+        $filename = "export-csv-" . $this->getUser()->getId() . ".csv";
+        $file = fopen($this->getParameter('csv_dir') . $filename, "w");
+        fwrite($file, $content);
+        fclose($file);
+
+        return new Response($content, 200, [
+            'Content-Type' => 'text/plain',
+            'Content-Disposition' => 'attachment; filename="' .$filename. '"'
         ]);
     }
 

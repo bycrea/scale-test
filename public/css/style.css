@@ -300,6 +300,12 @@ input[type="radio"]:checked {
 #user .diagnostics .infos.results {
     font-size: 1.2em;
     text-align: right;
+    margin-left: auto;
+}
+
+#user .diagnostics .download {
+    margin-left: auto;
+    margin-right: 1.5em;
 }
 
 #user .diagnostics .infos.results span {
@@ -317,16 +323,17 @@ input[type="radio"]:checked {
 }
 
 #user .diagnostics table tr.admin td {
-    width: calc(100%/3);
-    min-width: 200px;
+    width: unset;
 }
 
-#user .diagnostics table tr.admin td.ask {
+#user .diagnostics table tr.admin td.ask,
+#user .diagnostics table tr.admin td.answers {
     width: 40%;
 }
 
 #user .diagnostics table tr.admin td.type {
-    max-width: 5%;
+    width: 5%;
+    text-align: center;
 }
 
 #user .diagnostics table tr.admin td.type.sp{
@@ -832,6 +839,21 @@ input[type="radio"]:checked {
 /* ---- ADMIN - PARTICIPATIONS ---- */
 #admin .container.participations {
     width: 80%;
+}
+
+#admin .container select#diagnostics {
+    margin-left: 2em;
+    margin-right: auto;
+}
+
+#admin .container table.sp-8 th,
+#admin .container table.sp-8 td {
+    width: calc(100%/8);
+}
+
+#admin .container table.sp-9 th,
+#admin .container table.sp-9 td {
+    width: calc(100%/9);
 }
 
 #admin .participations .create {

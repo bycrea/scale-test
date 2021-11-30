@@ -22,34 +22,31 @@ class ScoringService
     public function getResults(Participation $participation, bool $isAdmin = false)
     {
         $questions = $participation->getDiagnostic()->getQuestions();
+        $QNextQuestions = [];
 
         foreach ($questions as $question)
         {
+            // NOTE activate QNext questions
+            $isQNext = in_array($question->getId(), $QNextQuestions);
+            if($isQNext) $question->setActivated(true);
+
+            // NOTE ignore unActived question
             if($question->getActivated() === false) continue;
 
             // NOTE Get result
             $question->results = [
                 'score'     => $this->getAnswerScore($question, $participation),
-                'scoreMax'  => $this->getAnswerMaxScore($question, $participation),
+                'scoreMax'  => $this->getAnswerMaxScore($question, $participation, $isQNext),
                 'answer'    => $participation->getAnswers()[$question->getId()] ?? null
             ];
 
-            // NOTE Activate QNext
+            // NOTE push QNext in array
             if(!empty($QNext = $question->getQnext()))
-            {
-                $next = $this->em->getRepository(Question::class)->find($QNext[0]);
-                $next->setActivated(true);
-
-                $next->results = [
-                    'score'     => $this->getAnswerScore($question, $participation),
-                    'scoreMax'  => $this->getAnswerMaxScore($question, $participation),
-                    'answer'    => $participation->getAnswers()[$question->getId()] ?? null
-                ];
-            }
+                array_push($QNextQuestions, $QNext[0]);
         }
 
         $this->getCategoriesResults($participation, $isAdmin);
-        $this->getGlobalResults($participation, $isAdmin);
+        $this->getGlobalResults($participation);
     }
 
 
@@ -59,7 +56,13 @@ class ScoringService
 
         foreach ($categories as $category)
         {
-            $category->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => "N.C.", 'maturity' => !$isAdmin && $category->getRang() == 1 ? "" : null];
+            // NOTE bind category "presentation" for ROLE_USER
+            if($isAdmin === false && $category->getId() == 1) {
+                $category->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 0, 'maturity' => ""];
+                continue;
+            }
+
+            $category->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 0, 'maturity' => "N.C."];
 
             foreach ($participation->getDiagnostic()->getQuestions() as $q) {
                 // NOTE Get category scores (score * factor)
@@ -70,10 +73,7 @@ class ScoringService
             }
 
             // NOTE Get category maturity
-            if($category->results['scores'] == 0 || $category->results['scoresMax'] == 0) {
-                if ($isAdmin) $category->results['percentage'] = 0;
-                continue;
-            }
+            if($category->results['scores'] == 0 || $category->results['scoresMax'] == 0) continue;
 
             $scale  = $category->results['percentage'] = $category->results['scores'] / $category->results['scoresMax'] * 100;
             $scales = $participation->getDiagnostic()->getCategoriesScales()[$category->getId()];
@@ -91,9 +91,9 @@ class ScoringService
     }
 
 
-    public function getGlobalResults(Participation $participation, bool $isAdmin)
+    public function getGlobalResults(Participation $participation)
     {
-        $participation->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 'N.C.', 'maturity' => null];
+        $participation->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 0, 'maturity' => null];
 
         foreach ($participation->getDiagnostic()->getQuestions() as $q) {
             // NOTE Get global scores (score * factor)
@@ -178,7 +178,7 @@ class ScoringService
     }
 
 
-    public function getAnswerMaxScore(Question $question, Participation $participation): int
+    public function getAnswerMaxScore(Question $question, Participation $participation, bool $isQNext = false): int
     {
         $answers = $participation->getAnswers()[$question->getId()] ?? null;
         $method  = Question::ANSWERTYPES[$question->getAnswerType()]['method'];
@@ -188,11 +188,15 @@ class ScoringService
         if($question->getRequired() === false && $answers === null)
             return 0;
 
+        // NOTE QNext questions need to be answered to count
+        if($isQNext && $answers === null)
+            return 0;
+
         if($question->getAnswerType() < 10)
         {
             switch ($method) {
                 case "+":
-                    foreach ($question->getAnswers()['score'] as $score) $result += $score;
+                    foreach ($question->getAnswers() as $answer) $result += $answer['score'];
                     break;
                 case "|":
                 case "&":

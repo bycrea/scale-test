@@ -49,13 +49,18 @@ class AdminController extends AbstractController
 
 
     /**
-     * @Route("/participations", name="participations")
+     * @Route("/participations/{diagnostic}", name="participations", defaults={"diagnostic": "null"})
      */
-    public function participations(EntityManagerInterface $em): Response
+    public function participations(?Diagnostic $diagnostic, EntityManagerInterface $em): Response
     {
+        $filters = isset($diagnostic) ? ['diagnostic' => $diagnostic] : [];
+        $participations = $em->getRepository(Participation::class)->findBy($filters, ['lastUpdate' => 'DESC']);
+
         return $this->render('admin/participations.html.twig', [
             'active'         => 'participations',
-            'participations' => $em->getRepository(Participation::class)->findBy([], ['lastUpdate' => 'DESC'])
+            'isSelectedDiag' => isset($diagnostic) ? $diagnostic->getId() : false,
+            'participations' => $participations,
+            'diagnostics'    => $em->getRepository(Diagnostic::class)->findAll()
         ]);
     }
 }

@@ -74,7 +74,7 @@ class QuestionRepository extends ServiceEntityRepository
      * @param Question|null $question
      * @return array
      */
-    public function getNextQuestion(Diagnostic $diagnostic, ?Question $question): array
+    public function getNextQuestions(Diagnostic $diagnostic, ?Question $question): array
     {
         $rang = $question ? $question->getRang() : 0;
 

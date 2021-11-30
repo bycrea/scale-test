@@ -14,6 +14,7 @@
                 {% if participation.done == true and participation.results is defined %}
                     <p class="infos results"><i>Stade de maturité globale</i> : <span class="maturity">{{ participation.results.maturity }} ({{ participation.results.percentage == 100 ? participation.results.percentage : participation.results.percentage|slice(0,4) }}%)</span></p>
                 {% endif %}
+                <a class="download" href="{{ path('admin_participation_download', {participations: participation.id}) }}" target="_blank"><img class="icon" src="{{ asset('img/icon/download.png') }}" alt="download"></a>
                 <a href="{{ path('admin_participations') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
             </div>
             <div class="head infos">
@@ -27,9 +28,11 @@
                     <thead>
                         <tr>
                             <th>Question</th>
-                            <th>Type de rép.</th>
                             <th>Réponse(s)</th>
                             <th>Score</th>
+                            <th>fx&nbsp;Catg.</th>
+                            <th>fx&nbsp;Global</th>
+                            <th>Type/Oblig.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,11 +45,8 @@
                             {% if question.category == category and question.activated %}
                                 {% set questionAnwsers = participation.answers[question.id] is defined ? participation.answers[question.id] : [] %}
                                 <tr class="admin">
-                                    <td class="ask">{{ question.ask }}</td>
-                                    <td class="type">
-                                        {{ constant('ANSWERTYPES', question)[question.answerType]['label'] }}{{ question.required ? ' *' : '' }}
-                                    </td>
-                                    <td>
+                                    <td class="ask">Q{{ question.id }}.&nbsp;{{ question.ask }}</td>
+                                    <td class="answers">
                                         {% for key, answer in question.answers %}
                                             {% if question.answerType < 10 %}
                                                 <div class="answer">
@@ -58,6 +58,11 @@
                                         {% endfor %}
                                     </td>
                                     <td class="type sp">{{ question.results.score }}/{{ question.results.scoreMax }}</td>
+                                    <td class="type sp">x{{ question.categoryFactor }}</td>
+                                    <td class="type sp">x{{ question.globalFactor }}</td>
+                                    <td class="type sp">
+                                        {{ constant('ANSWERTYPES', question)[question.answerType]['label'] }}{{ question.required ? '&nbsp;*' : '' }}
+                                    </td>
                                 </tr>
                             {% endif %}
                         {% endfor %}

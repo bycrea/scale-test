@@ -12,7 +12,22 @@
                 <a href="{{ path('admin_participation_new') }}"><img class="icon" src="{{ asset('img/icon/add.png') }}" alt="add"></a>
             </div>
 
-            <table>
+            <div class="head">
+                <h3 class="title">Filter par diagnostique : </h3>
+                <select name="diagnostics" id="diagnostics">
+                    <option value="">...</option>
+                    {% for diagnostic in diagnostics %}
+                        <option value="{{ diagnostic.id }}" {{ isSelectedDiag == diagnostic.id ? 'selected' : '' }}>{{ diagnostic.id }}. {{ diagnostic.name }}</option>
+                    {% endfor %}
+                </select>
+                {% if isSelectedDiag != false %}
+                    <a href="{{ path('admin_participation_download') }}" target="_blank">
+                        <img onclick="participationsDownload(event)" class="download icon disabled" src="{{ asset('img/icon/download.png') }}" alt="download">
+                    </a>
+                {% endif %}
+            </div>
+
+            <table class="{{ isSelectedDiag != false ? 'sp-9' : 'sp-8' }}">
                 <thead>
                     <tr>
                         <th class="small">Id</th>
@@ -23,6 +38,9 @@
                         <th class="small center">Voir</th>
                         <th class="small center">Reset</th>
                         <th class="small center">Suppr.</th>
+                        {% if isSelectedDiag != false %}
+                            <th class="small center">Export CSV</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +71,11 @@
                                     <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
                                 </a>
                             </td>
+                            {% if isSelectedDiag != false %}
+                                <th class="small center">
+                                    <input type="checkbox" name="downloads[]" autocomplete="off" value="{{ participation.id }}" onchange="addParticipation()">
+                                </th>
+                            {% endif %}
                         </tr>
                     {% else %}
                         <table style="margin-top: 50px;">
@@ -75,5 +98,34 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script></script>
+    <script>
+        document.querySelector('select#diagnostics').addEventListener('change', (e) => {
+            const id = e.target.selectedOptions[0].value;
+            location.href = "{{ path('admin_participations') }}/" + id;
+        });
+
+        let participations = [];
+        function addParticipation(id)
+        {
+            participations = [];
+
+            let inputs = document.querySelectorAll('input[name="downloads[]"]');
+            inputs.forEach(i => {
+                if(i.checked === true) participations.push(i.value);
+            });
+
+            if(participations.length > 0)
+                document.querySelector('img.download').classList.remove('disabled');
+            else
+                document.querySelector('img.download').classList.add('disabled');
+        }
+
+        function participationsDownload(e)
+        {
+            e.preventDefault();
+            if(participations.length <= 0) return false;
+
+            window.open(e.target.parentNode.href + "/" + participations.join('|'), "_blank");
+        }
+    </script>
 {% endblock %}

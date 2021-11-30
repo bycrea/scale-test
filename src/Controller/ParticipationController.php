@@ -78,7 +78,7 @@ class ParticipationController extends AbstractController
             $em->flush();
         }
 
-        $nextQuestions = $em->getRepository(Question::class)->getNextQuestion($participation->getDiagnostic(), $actualQuestion ?? null);
+        $nextQuestions = $em->getRepository(Question::class)->getNextQuestions($participation->getDiagnostic(), $actualQuestion ?? null);
         $nextQuestion  = $participation->getMeta()['initiate'] ?? (!empty($nextQuestions) ? $nextQuestions[0] : null);
 
         if($nextQuestion === false) {
@@ -88,7 +88,7 @@ class ParticipationController extends AbstractController
             $em->flush();
         } else {
             $participation->updateMeta('total', $em->getRepository(Question::class)->countQuestions($participation->getDiagnostic()));
-            $participation->updateMeta('left', count($nextQuestions));
+            $participation->updateMeta('left', $participation->getMeta()['total'] - count($participation->getAnswers()));
 
             // NOTE build next question
             $html = $this->renderView('participation/question_create.html.twig', [
@@ -132,7 +132,7 @@ class ParticipationController extends AbstractController
     private function updateAnswers(InputBag $inputs, Question $question, array $answers): array
     {
         foreach ($inputs->get('answers', []) as $answer) {
-            if(empty($answer)) continue;
+            if($answer === null || trim($answer) === "") continue;
 
             if ($question->getAnswerType() == 12 || $question->getAnswerType() == 13)
                 $answer = (new \DateTime($answer))->format(Question::ANSWERTYPES[$question->getAnswerType()]['method']);
@@ -163,7 +163,7 @@ class ParticipationController extends AbstractController
             $participation->unsetMeta('pending');
         }
 
-        $nextQuestions = $this->em->getRepository(Question::class)->getNextQuestion($question->getDiagnostic(), $question);
+        $nextQuestions = $this->em->getRepository(Question::class)->getNextQuestions($question->getDiagnostic(), $question);
         $participation->updateMeta('initiate', !empty($nextQuestions) ? $nextQuestions[0]->getId() : false);
 
         return $participation;
