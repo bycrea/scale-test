@@ -13,13 +13,17 @@
             </div>
 
             <div class="head">
-                <h3 class="title">Filter par diagnostique : </h3>
-                <select name="diagnostics" id="diagnostics">
-                    <option value="">...</option>
-                    {% for diagnostic in diagnostics %}
-                        <option value="{{ diagnostic.id }}" {{ isSelectedDiag == diagnostic.id ? 'selected' : '' }}>{{ diagnostic.id }}. {{ diagnostic.name }}</option>
-                    {% endfor %}
-                </select>
+                <div id="filters">
+                    <h3 class="title">Filter par : Diagnostiques</h3>
+                    <select name="diagnostics" id="diagnostics">
+                        <option value="">tous...</option>
+                        {% for diagnostic in diagnostics %}
+                            <option value="{{ diagnostic.id }}" {{ isSelectedDiag == diagnostic.id ? 'selected' : '' }}>{{ diagnostic.id }}. {{ diagnostic.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <h3 class="title">Utilisateurs</h3>
+                    <input type="text" id="search" name="search" autocomplete="off" placeholder="rechercher">
+                </div>
                 {% if isSelectedDiag != false %}
                     <a href="{{ path('admin_participation_download') }}" target="_blank">
                         <img onclick="participationsDownload(event)" class="download icon disabled" src="{{ asset('img/icon/download.png') }}" alt="download">
@@ -48,7 +52,7 @@
                         <tr>
                             <td class="small">{{ participation.id }}</td>
                             {% set company = participation.user.company is defined ? '<br><i>' ~ participation.user.company ~ '</i>' : "" %}
-                            <td>{{ participation.user.username }}{{ company|raw }}</td>
+                            <td class="user">{{ participation.user.username }}<br>{{ participation.user.email }}{{ company|raw }}</td>
                             <td>{{ participation.diagnostic.name }}</td>
                             <td class="small center">{{ participation.createdAt|date('d-m-y H:i') }}</td>
                             <td class="small center">{{ participation.createdAt == participation.lastUpdate ? "--" : participation.lastUpdate|date('d-m-y H:i') }}</td>
@@ -62,18 +66,20 @@
                                 {% endif %}
                             </td>
                             <td class="small center">
-                                <a href="{{ path('admin_participation_reset', {participation: participation.id}) }}">
-                                    <img class="icon" src="{{ asset('img/icon/return.png') }}" alt="reset">
-                                </a>
+                                <img class="icon" src="{{ asset('img/icon/return.png') }}" alt="reset"
+                                     onclick="alertAction('Reset', {{ participation.id }}, '{{ path('admin_participation_reset', {participation: participation.id}) }}')"
+                                >
                             </td>
                             <td class="small center">
-                                <a href="{{ path('admin_participation_delete', {participation: participation.id}) }}">
-                                    <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash">
-                                </a>
+                                <img class="icon" src="{{ asset('img/icon/trash.png') }}" alt="trash"
+                                     onclick="alertAction('Suppr.', {{ participation.id }}, '{{ path('admin_participation_delete', {participation: participation.id}) }}')"
+                                >
                             </td>
                             {% if isSelectedDiag != false %}
                                 <th class="small center">
-                                    <input type="checkbox" name="downloads[]" autocomplete="off" value="{{ participation.id }}" {{ participation.done == false ? 'disabled' : '' }} onchange="addParticipation()">
+                                    <input type="checkbox" name="downloads[]" autocomplete="off"
+                                           value="{{ participation.id }}" {{ participation.done == false ? 'disabled' : '' }} onchange="addParticipation(event)"
+                                    >
                                 </th>
                             {% endif %}
                         </tr>
@@ -99,20 +105,52 @@
 
 {% block javascripts %}
     <script>
+        // NOTE handle search in table
+        document.querySelector('input[name="search"]').addEventListener('keyup', e => {
+            let input = e.target.value;
+            document.querySelectorAll('td.user').forEach(td => {
+                let tr = td.parentNode;
+                if(td.innerText.toLowerCase().search(input.toLowerCase()) === -1) tr.style.display = "none";
+                else if(input === "") tr.style.display = "table-row";
+                else tr.style.display = "table-row";
+            });
+        });
+
+        // NOTE alert before action
+        function alertAction(action, id, href)
+        {
+            if(confirm(action + ' participation N°' + id + '\n\nÊtes-vous sur de vouloir continuer?')) location.href = href;
+            return false;
+        }
+
+        // NOTE handle select diagnostic => reload
         document.querySelector('select#diagnostics').addEventListener('change', (e) => {
             const id = e.target.selectedOptions[0].value;
             location.href = "{{ path('admin_participations') }}/" + id;
         });
 
+        // NOTE toggle select all participations
+        let alt = false;
+        window.addEventListener('keydown', (e) => {if(e.key === "Alt") alt = true});
+        window.addEventListener('keyup', (e) => {if(e.key === "Alt") alt = false});
+
         let participations = [];
-        function addParticipation(id)
+        function addParticipation(e)
         {
             participations = [];
+            const inputs    = document.querySelectorAll('input[name="downloads[]"]');
+            const isChecked = e.target.checked;
 
-            let inputs = document.querySelectorAll('input[name="downloads[]"]');
-            inputs.forEach(i => {
-                if(i.checked === true) participations.push(i.value);
-            });
+            if(alt) {
+                inputs.forEach(i => {
+                    if(i.disabled === false) i.checked = isChecked;
+                    if(isChecked  === true ) participations.push(i.value);
+                });
+            } else {
+                inputs.forEach(i => {
+                    if(i.checked === true) participations.push(i.value);
+                });
+            }
 
             if(participations.length > 0)
                 document.querySelector('img.download').classList.remove('disabled');
@@ -120,6 +158,7 @@
                 document.querySelector('img.download').classList.add('disabled');
         }
 
+        // NOTE download participations as .CSV
         function participationsDownload(e)
         {
             e.preventDefault();

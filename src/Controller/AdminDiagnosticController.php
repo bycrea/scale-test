@@ -83,7 +83,7 @@ class AdminDiagnosticController extends AbstractController
 
         // NOTE Get last update Catg. from question
         $lastUpdate = $em->getRepository(Question::class)->getLastUpdate($diagnostic);
-        $lastUpdate = $lastUpdate !== null ? $lastUpdate->getCategory()->getId() : 1;
+        $lastUpdate = $lastUpdate !== null ? "#Q".$lastUpdate->getId() : "";
 
         // NOTE Get QLinked & QNexted questions
         $isQLinked = $isQNexted = [];

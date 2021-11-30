@@ -36,9 +36,9 @@
                             </a>
                         </td>
                     {% else %}
-                        <th class="small center">
+                        <td class="small center">
                             <img class="icon disabled" src="{{ asset('img/icon/wait.png') }}" alt="status">
-                        </th>
+                        </td>
                         <td class="small center" title="commencer">
                             <a href="{{ path('participation_start', {participation: participation.id}) }}">
                                 <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="start">

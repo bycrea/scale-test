@@ -41,10 +41,11 @@
 
 {% block javascripts %}
     <script>
+        // NOTE handle search in names/emails
         document.querySelector('input[name="search"]').addEventListener('keyup', e => {
             let input = e.target.value;
             document.querySelectorAll('select[name="users[]"] option').forEach(o => {
-                if(o.innerText.search(input) === -1) o.style.display = "none";
+                if(o.innerText.toLowerCase().search(input.toLowerCase()) === -1) o.style.display = "none";
                 else if(input === "") o.style.display = "block";
                 else o.style.display = "block";
             });

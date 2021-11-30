@@ -346,13 +346,6 @@ input[type="radio"]:checked {
     color: black;
 }
 
-#user .diagnostics table td:not(.category) {
-    font-weight: normal;
-    font-size: 1em;
-    color: black;
-    border-bottom: 2px solid whitesmoke;
-}
-
 #user .diagnostics table td.category {
     width: 60%;
     font-weight: bold;
@@ -416,6 +409,13 @@ input[type="radio"]:checked {
 .container table td {
     width: calc(100%/8);
     padding: 5px;
+}
+
+.container table td:not(.category) {
+    font-weight: normal;
+    font-size: 1em;
+    color: black;
+    border-bottom: 2px solid whitesmoke;
 }
 
 .container table th.center,
@@ -627,9 +627,8 @@ input[type="radio"]:checked {
 }
 
 #admin .container.diagnostics form .questions table tr.question.dragover {
-    opacity: .5;
-    background-color: whitesmoke;
-    border-bottom: 1pt solid black;
+    opacity: .6;
+    background-color: #A2C5F7;
 }
 
 #admin .container.diagnostics form .questions table td {
@@ -841,9 +840,17 @@ input[type="radio"]:checked {
     width: 80%;
 }
 
-#admin .container select#diagnostics {
-    margin-left: 2em;
+#admin .container #filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
     margin-right: auto;
+}
+
+#admin .container .head select,
+#admin .container .head input {
+    margin: 0 1em;
 }
 
 #admin .container table.sp-8 th,

@@ -20,7 +20,7 @@
 
                 {% for key, category in categories %}
                     {% set MATURITY = constant('CATEGORY_MATURITY', diagnostic) %}
-                    <div class="category {{ lastUpdate == category.id ? 'active' : '' }}" data-category-id="{{ category.id }}">
+                    <div class="category active" data-category-id="{{ category.id }}">
                         <div class="top">
                             <h2 class="name sn">{{ category.name }}</h2>
                             <label for="level-1">
@@ -42,7 +42,7 @@
                                 <tbody>
                                     {% for question in diagnostic.questions %}
                                         {% if question.category == category %}
-                                            <tr class="question"
+                                            <tr id="Q{{ question.id }}" class="question"
                                                 data-id="{{ question.id }}" data-rang="{{ question.rang }}" data-category="{{ category.id }}"
                                                     title="{{ question.id in isQLinked ? 'QLinked' : (question.id in isQNexted ? 'QNexted' : '') }}"
                                             >
@@ -53,7 +53,8 @@
                                                            {{ question.id in isQLinked or question.id in isQNexted ? 'disabled' : '' }}
                                                     >
                                                 </td>
-                                                <td class="x-small">Q{{ question.id }}</td>
+                                                <td class="x-small rang"><span>{{ question.rang }}</span>.</td>
+                                                <td class="x-small center">(Q{{ question.id }})</td>
                                                 <td class="small center">
                                                     <img class="icon move" src="{{ asset('img/icon/up-down.png') }}" alt="move">
                                                 </td>
@@ -128,6 +129,12 @@
 
 {% block javascripts %}
     <script>
+        // NOTE scroll in to view on refresh
+        const lastUpdate = "{{ lastUpdate }}";
+        document.addEventListener("DOMContentLoaded", function(event) {
+            if(lastUpdate !== "") location.href = lastUpdate;
+        });
+
         // NOTE change name && comment
         document.querySelectorAll('[data-name]').forEach(data => {
             data.addEventListener('keyup', () => {
@@ -160,7 +167,6 @@
 
         document.querySelectorAll('tr.question').forEach(q => {
             q.addEventListener('dragenter', qDragOver);
-            q.addEventListener('dragleave', qDragLeave);
         });
 
         function qDragStart(e) {
@@ -171,19 +177,22 @@
         }
 
         function qDragOver(e) {
+            qDragLeave();
+
             let q = e.target.closest('tr.question');
-            q.classList.add('dragover');
+            if(q !== dragged) q.classList.add('dragover');
 
             over = q;
             isUp = dragged.dataset.rang > over.dataset.rang;
         }
 
-        function qDragLeave(e) {
-            let q = e.target.closest('tr.question');
-            q.classList.remove('dragover');
+        function qDragLeave() {
+            document.querySelectorAll('tr.question.dragover').forEach(q => q.classList.remove('dragover'));
         }
 
         function qDragEnd(e) {
+            qDragLeave();
+
             let q = e.target.closest('tr.question');
             q.classList.remove('drag');
             q.classList.remove('dragover');
@@ -195,7 +204,8 @@
                 let data = {order: {}};
                 document.querySelectorAll('tr.question').forEach((e, k) => {
                     e.dataset.rang = (k+1).toString();
-                    data.order[e.dataset.id] = e.dataset.rang;;
+                    e.querySelector('td.rang span').innerText = e.dataset.rang;
+                    data.order[e.dataset.id] = e.dataset.rang;
                 });
 
                 data['dragged'] = dragged.dataset.id;
