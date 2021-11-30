@@ -73,7 +73,7 @@
                             </td>
                             {% if isSelectedDiag != false %}
                                 <th class="small center">
-                                    <input type="checkbox" name="downloads[]" autocomplete="off" value="{{ participation.id }}" onchange="addParticipation()">
+                                    <input type="checkbox" name="downloads[]" autocomplete="off" value="{{ participation.id }}" {{ participation.done == false ? 'disabled' : '' }} onchange="addParticipation()">
                                 </th>
                             {% endif %}
                         </tr>
