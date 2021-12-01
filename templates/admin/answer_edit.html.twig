@@ -24,7 +24,7 @@
         <select name="qlink[]" class="questions" autocomplete="off" {{ isQLink ? '' : 'disabled' }}>
             {% for q in diagnostic.questions %}
                 {% if q != question %}
-                    <option value="{{ q.id }}" {{ isQLink and question.qlink[0] == q.id ? 'selected' : '' }}>{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+                    <option value="{{ q.id }}" {{ isQLink and question.qlink[0] == q.id ? 'selected' : '' }}>Q{{ q.id }}. {{ q.ask|slice(0, 50) ~ "..." }}</option>
                 {% endif %}
             {% endfor %}
         </select>
@@ -48,7 +48,7 @@
         <select name="qnext[]" class="questions" autocomplete="off" {{ isQNext ? '' : 'disabled' }}>
             {% for q in diagnostic.questions %}
                 {% if q != question %}
-                    <option value="{{ q.id }}" {{ isQNext and question.qnext[0] == q.id ? 'selected' : '' }}>{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+                    <option value="{{ q.id }}" {{ isQNext and question.qnext[0] == q.id ? 'selected' : '' }}>Q{{ q.id }}. {{ q.ask|slice(0, 50) ~ "..." }}</option>
                 {% endif %}
             {% endfor %}
         </select>

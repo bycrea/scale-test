@@ -28,7 +28,7 @@
         Le score dépendra de la réponse à la question&nbsp;
         <select name="qlink[]" class="questions" autocomplete="off" disabled>
             {% for q in diagnostic.questions %}
-                <option value="{{ q.id }}">{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+                <option value="{{ q.id }}">Q{{ q.id }}. {{ q.ask|slice(0, 50) ~ "..." }}</option>
             {% endfor %}
         </select>
         &nbsp;si le score de celle-ci est&nbsp;
@@ -49,7 +49,7 @@
         On appelera la question&nbsp;
         <select name="qnext[]" class="questions" autocomplete="off" disabled>
             {% for q in diagnostic.questions %}
-                <option value="{{ q.id }}">{{ q.id }}. {{ q.ask|slice(0, 10)~"..." }}</option>
+                <option value="{{ q.id }}">Q{{ q.id }}. {{ q.ask|slice(0, 50) ~ "..." }}</option>
             {% endfor %}
         </select>
         &nbsp;si le score à la question actuelle est&nbsp;

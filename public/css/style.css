@@ -808,7 +808,7 @@ input[type="radio"]:checked {
 
 #admin .container.diagnostics .create .qlink select.questions,
 #admin .container.diagnostics .create .qnext select.questions {
-    width: 100px;
+    width: 30%;
 }
 
 
