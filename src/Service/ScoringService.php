@@ -41,8 +41,12 @@ class ScoringService
             ];
 
             // NOTE push QNext in array
-            if(!empty($QNext = $question->getQnext()))
+            if(!empty($QNext = $question->getQnext())) {
                 array_push($QNextQuestions, $QNext[0]);
+
+                if(isset($QNext[3]))
+                    array_push($QNextQuestions, $QNext[3]);
+            }
         }
 
         $this->getCategoriesResults($participation, $isAdmin);
@@ -65,9 +69,11 @@ class ScoringService
             $category->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 0, 'maturity' => "N.C."];
 
             foreach ($participation->getDiagnostic()->getQuestions() as $q) {
+                if($q->results === null) continue;
+
                 // NOTE Get category scores (score * factor)
                 if ($q->getCategory() === $category) {
-                    $category->results['scores']    += ($q->results['score'] * $q->getCategoryFactor());
+                    $category->results['scores']    += ($q->results['score']    * $q->getCategoryFactor());
                     $category->results['scoresMax'] += ($q->results['scoreMax'] * $q->getCategoryFactor());
                 }
             }
@@ -96,8 +102,10 @@ class ScoringService
         $participation->results = ['scores' => 0, 'scoresMax' => 0, 'percentage' => 0, 'maturity' => null];
 
         foreach ($participation->getDiagnostic()->getQuestions() as $q) {
+            if($q->results === null) continue;
+
             // NOTE Get global scores (score * factor)
-            $participation->results['scores']    += ($q->results['score'] * $q->getGlobalFactor());
+            $participation->results['scores']    += ($q->results['score']    * $q->getGlobalFactor());
             $participation->results['scoresMax'] += ($q->results['scoreMax'] * $q->getGlobalFactor());
         }
 

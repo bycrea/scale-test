@@ -66,15 +66,14 @@
                                                 <td class="small qlink {{ question.id in isQLinked ? 'isQLinked' : '' }}">
                                                     {% set QID   = question.id %}
                                                     {% set QLink = question.qlink %}
-                                                    QLink&nbsp;<input type="text" readonly value="{{ QLink is not empty ? "Q" ~ QLink[0] ~ QLink[1] ~ "Q" ~ QID ~ "=" ~ (QLink[2] is not empty ? QLink[2] : "Q" ~ QID ) : "--" }}">
+                                                    QLink<br>{{ QLink is not empty ? "Q" ~ QLink[0] ~ QLink[1] ~ "Q" ~ QID ~ "=" ~ (QLink[2] is not empty ? QLink[2] : "Q" ~ QID ) : "--" }}
                                                 </td>
                                                 <td class="small qnext {{ question.id in isQNexted ? 'isQNexted' : '' }}">
                                                     {% set QNext = question.qnext %}
-                                                    QNext&nbsp;<input type="text" readonly value="{{ QNext is not empty ? "Q" ~ QID ~ QNext[1] ~ QNext[2] ~ "=>Q" ~ QNext[0]: '--' }}">
+                                                    QNext<br>{{ QNext is not empty ? "Q" ~ QID ~ QNext[1] ~ QNext[2] ~ "-->Q" ~ QNext[0] ~ (QNext[3] is defined ? "|Q" ~ QNext[3] : "") : '--' }}
                                                 </td>
-                                                <td class="x-small">Pond.&nbsp;</td>
-                                                <td class="small factor">Catg.&nbsp;<input type="text" readonly value="{{ question.categoryFactor }}"></td>
-                                                <td class="small factor">Global&nbsp;<input type="text" readonly value="{{ question.globalFactor }}"></td>
+                                                <td class="small factor">Catg.&nbsp;ƒ&nbsp;{{ question.categoryFactor }}</td>
+                                                <td class="small factor">Global&nbsp;ƒ&nbsp;{{ question.globalFactor }}</td>
                                                 <td class="small center">
                                                     <a href="{{ path('admin_question_edit', {diagnostic: diagnostic.id, category: category.id, question: question.id}) }}">
                                                         <img class="icon" src="{{ asset('img/icon/edit.png') }}" alt="edit">

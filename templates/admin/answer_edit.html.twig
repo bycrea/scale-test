@@ -19,7 +19,7 @@
 {% if id < 10 %}
     {% set isQLink = question.qlink is not empty %}
     <div class="qlink {{ isQLink ? '' : 'disabled' }}">
-        <label class="activate">Activer QLink&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQLink ? 'checked' : '' }}></label>
+        <label class="activate">Activer QLink&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQLink ? 'checked' : '' }} autocomplete="off"></label>
         Le score dépendra de la réponse à la question&nbsp;
         <select name="qlink[]" class="questions" autocomplete="off" {{ isQLink ? '' : 'disabled' }}>
             {% for q in diagnostic.questions %}
@@ -36,14 +36,15 @@
             <option value="&lt;=" {{ isQLink and question.qlink[1] == "<=" ? 'selected' : '' }}>&lt;=</option>
             <option value="==" {{ isQLink and question.qlink[1] == "==" ? 'selected' : '' }}>==</option>
         </select>
-        &nbsp;au score de la question actuelle.<br>
+        &nbsp;au score de la question actuelle.
+        <br><br>
         Imposer un score pour la question actuelle&nbsp;?&nbsp;
-        <input type="number" name="qlink[]" min="0" max="99" value="{{ isQLink ? question.qlink[2] : '0' }}" {{ isQLink ? '' : 'disabled' }}>
+        <input type="number" name="qlink[]" min="0" max="99" value="{{ isQLink and question.qlink[2] is not empty ? question.qlink[2] : '' }}" {{ isQLink ? '' : 'disabled' }}>
     </div>
 
     {% set isQNext = question.qnext is not empty %}
     <div class="qnext {{ isQNext ? '' : 'disabled' }}">
-        <label class="activate">Activer QNext&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQNext ? 'checked' : '' }}></label>
+        <label class="activate">Activer QNext&nbsp;<input type="checkbox" value="true" onchange="activateInputs(event)" {{ isQNext ? 'checked' : '' }} autocomplete="off"></label>
         On appelera la question&nbsp;
         <select name="qnext[]" class="questions" autocomplete="off" {{ isQNext ? '' : 'disabled' }}>
             {% for q in diagnostic.questions %}
@@ -53,7 +54,7 @@
             {% endfor %}
         </select>
         &nbsp;si le résultat à la question actuelle est&nbsp;
-        <select name="qnext[]" {{ isQNext ? '' : 'disabled' }}>
+        <select name="qnext[]" autocomplete="off" {{ isQNext ? '' : 'disabled' }}>
             <option value="&gt;" {{ isQNext and question.qnext[1] == ">" ? 'selected' : '' }}>&gt;</option>
             <option value="&lt;" {{ isQNext and question.qnext[1] == "<" ? 'selected' : '' }}>&lt;</option>
             <option value="&gt;=" {{ isQNext and question.qnext[1] == ">=" ? 'selected' : '' }}>&gt;=</option>
@@ -62,6 +63,15 @@
         </select>
         &nbsp;à&nbsp;
         <input type="number" name="qnext[]" min="0" value="{{ isQNext ? question.qnext[2] : '0' }}" {{ isQNext ? '' : 'disabled' }}>
+        <br><br>
+        {% set nextQuestion = isQNext and question.qnext[3] is defined ? question.qnext[3] : "" %}
+        Sinon on appelera la question&nbsp;
+        <select name="qnext[]" class="questions" autocomplete="off" {{ isQNext ? '' : 'disabled' }}>
+            <option value="null" {{ nextQuestion == "" ? 'selected' : '' }}>suivante</option>
+            {% for q in diagnostic.questions %}
+                <option value="{{ q.id }}" {{ nextQuestion == q.id ? 'selected' : '' }}>Q{{ q.id }}. {{ q.ask|slice(0, 50) ~ "..." }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div class="factors">

@@ -45,6 +45,11 @@ class AdminQuestionController extends AbstractController
                 $newCategory = $em->getRepository(Category::class)->find($r->get('category'));
                 $isNewCat    = $newCategory !== $category;
 
+                // NOTE get QLink && QNext (Qnext[3] is unset if 'null')
+                $QLink       = $r->get('qlink', null);
+                $QNext       = $r->get('qnext', null);
+                if(isset($QNext[3]) && $QNext[3] == "null") unset($QNext[3]);
+
                 // NOTE save basics
                 $question = $question ?? new Question();
                 $question
@@ -56,8 +61,8 @@ class AdminQuestionController extends AbstractController
                     ->setAnswerType($r->get('answerType'))
                     ->setCategoryFactor($r->get('categoryFactor', 0))
                     ->setGlobalFactor($r->get('globalFactor', 0))
-                    ->setQlink($r->get('qlink', null))
-                    ->setQnext($r->get('qnext', null))
+                    ->setQlink($QLink)
+                    ->setQnext($QNext)
                     ->setDiagnostic($diagnostic);
 
                 // NOTE save answers
@@ -66,10 +71,16 @@ class AdminQuestionController extends AbstractController
                 foreach ($r->get('answers', []) as $key => $answer) $answers[$key] = ['answer' => $answer, 'score' => $scores[$key]];
                 $question->setAnswers($answers);
 
-                // NOTE Inactivate Nexted question
+                // NOTE Inactivate Nexted questions
                 if(!empty($QNext = $question->getQnext())) {
                     $nexted = ($em->getRepository(Question::class)->find($QNext[0]))->setActivated(false);
                     $em->persist($nexted);
+
+                    if(isset($QNext[3]))
+                    {
+                        $nexted = ($em->getRepository(Question::class)->find($QNext[3]))->setActivated(false);
+                        $em->persist($nexted);
+                    }
                 }
 
                 // NOTE Activate Linked question

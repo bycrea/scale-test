@@ -1,7 +1,10 @@
 
 <div class="category" style="background-color: {{ question.category.hexColor }}">
-    <h2 class="title">{{ question.category.name }} <span class="clear" onclick="eraseAnswers()">effacer</span></h2>
-    <p class="infos">Question {{ participation.meta.total - participation.meta.left + 1 }}/{{ participation.meta.total }} {{ question.required ? ' *' : '' }}</p>
+    <h2 class="title">{{ question.category.name }} <span class="clear no-mob" onclick="eraseAnswers()">effacer la réponse</span></h2>
+    <p class="infos">
+        Question {{ participation.meta.total - participation.meta.left + 1 }}/{{ participation.meta.total }}
+        <i class="required">{{ question.required ? ' (réponse exigé)' : '' }}</i>
+    </p>
 
     <div class="question">
         <h3 class="ask">{{ question.ask }}</h3>
@@ -10,5 +13,7 @@
         <div class="answers">
             {{ include('participation/answer_create.html.twig') }}
         </div>
+
+        <span class="clear mob" onclick="eraseAnswers()">effacer la réponse</span>
     </div>
 </div>

@@ -92,8 +92,12 @@ class AdminDiagnosticController extends AbstractController
             if(!empty($QLink = $q->getQlink()))
                 $isQLinked[] = $em->getRepository(Question::class)->find($QLink[0])->getId();
 
-            if(!empty($QNext = $q->getQnext()))
+            if(!empty($QNext = $q->getQnext())) {
                 $isQNexted[] = $em->getRepository(Question::class)->find($QNext[0])->getId();
+
+                if(isset($QNext[3]))
+                    $isQNexted[] = $em->getRepository(Question::class)->find($QNext[3])->getId();
+            }
         }
 
         return $this->render('admin/diagnostic_edit.html.twig', [

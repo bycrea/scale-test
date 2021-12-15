@@ -1,0 +1,39 @@
+
+@media screen and (max-width: 960px) {
+    .mob {
+        display: block;
+    }
+
+    .no-mob {
+        display: none;
+    }
+
+    /* --- INPUTS STYLE --- */
+    /* ---- USER - INDEX ---- */
+    /* ---- USER - LOGIN ---- */
+    /* ---- USER - PARTICIPATION ---- */
+    #user .container {
+        width: 90%;
+    }
+
+    #user .participation .category .question .answer {
+        padding: unset;
+        flex-direction: column;
+    }
+
+    #user .participation .category .question .row{
+        width: 100%;
+    }
+
+    #user .participation .category .question label {
+        margin-bottom: 10px;
+    }
+
+    /* ---- USER - PARTICIPATION - RESULTS ---- */
+    /* ---- ADMIN / USERS ---- */
+    /* ---- ADMIN - MENU---- */
+    /* ---- ADMIN ---- */
+    /* ---- ADMIN - DIAGNOSTICS ---- */
+    /* ---- ADMIN - ADD - QUESTION ---- */
+    /* ---- ADMIN - PARTICIPATIONS ---- */
+}

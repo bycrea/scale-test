@@ -146,14 +146,24 @@ class ParticipationController extends AbstractController
 
     private function getNextQuestion(Participation $participation, Question $question): Participation
     {
-        // NOTE Call QNext
-        if(!empty($question->getQnext()) && $this->scoringService->getQNextValidation($question, $participation) !== false)
+        // NOTE Call QNext[0] IF cond. == true
+        if(!empty($question->getQnext()) && $this->scoringService->getQNextValidation($question, $participation) == true)
         {
             // NOTE set pending as initiate
             if(!isset($participation->getMeta()['pending']))
                 $participation->updateMeta('pending', $participation->getMeta()['initiate'] ?? $participation->getDiagnostic()->getQuestions()[0]);
 
             $participation->updateMeta('initiate', $question->getQnext()[0]);
+            return $participation;
+        }
+        // NOTE Call QNext[3] IF isset && cond. == false
+        else if(!empty($question->getQnext()) && isset($question->getQnext()[3]) && $this->scoringService->getQNextValidation($question, $participation) == false)
+        {
+            // NOTE set pending as initiate
+            if(!isset($participation->getMeta()['pending']))
+                $participation->updateMeta('pending', $participation->getMeta()['initiate'] ?? $participation->getDiagnostic()->getQuestions()[0]);
+
+            $participation->updateMeta('initiate', $question->getQnext()[3]);
             return $participation;
         }
         // NOTE OR call pending (question QNext originator)

@@ -61,6 +61,13 @@ h3 {
     color: #3b89ee;
 }
 
+.mob {
+    display: none;
+}
+
+.no-mob {
+    display: block;
+}
 
 /* --- INPUTS STYLE --- */
 
@@ -204,7 +211,7 @@ input[type="radio"]:checked {
 
 #user .participation .category {
     width: 100%;
-    height: 1px;
+    /*height: 1px;*/
     min-height: 50vh;
     padding: 50px;
     border-radius: 20px;
@@ -244,6 +251,10 @@ input[type="radio"]:checked {
     color: #333;
 }
 
+#user .participation .category .infos .required{
+    font-size: 11px;
+}
+
 #user .participation .category .question {
     display: flex;
     flex-direction: column;
@@ -253,6 +264,7 @@ input[type="radio"]:checked {
 }
 
 #user .participation .category .question .ask{
+    margin-top: 1em;
     font-size: 1.5em;
 }
 
@@ -445,8 +457,10 @@ input[type="radio"]:checked {
 }
 
 .container form input[type="submit"] {
-    margin-top: 50px;
-    margin-bottom: 15vh;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    /*margin-top: 50px;
+    margin-bottom: 15vh;*/
 }
 
 .container form select:disabled,
@@ -642,12 +656,11 @@ input[type="radio"]:checked {
     vertical-align: middle;
 }
 
-#admin .container.diagnostics form .questions table td.qlink input,
-#admin .container.diagnostics form .questions table td.qnext input,
-#admin .container.diagnostics form .questions table td.factor input{
-    min-width: 30px;
+#admin .container.diagnostics form .questions table td.qlink,
+#admin .container.diagnostics form .questions table td.qnext,
+#admin .container.diagnostics form .questions table td.factor{
     width: calc(100%/12);
-    font-size: 12px;
+    font-size: 13px;
     padding: 2px;
     text-align: center;
 }
@@ -783,6 +796,10 @@ input[type="radio"]:checked {
 #admin .container.diagnostics .create .qnext {
     width: 100%;
     padding: 10px;
+    margin: 1em 0;
+    border: 1px solid whitesmoke;
+    border-radius: 20px;
+    background-color: whitesmoke;
     color: black;
 }
 
