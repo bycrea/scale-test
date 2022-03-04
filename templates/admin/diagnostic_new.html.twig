@@ -8,7 +8,7 @@
 
         <div class="container diagnostics">
             <div class="head">
-                <h1 class="title">Editer un diagnostique</h1>
+                <h1 class="title">Editer un diagnostic</h1>
                 <a href="{{ path('admin_diagnostics') }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
 
                 {% if error is defined %}
@@ -18,7 +18,7 @@
 
             <form action="{{ path('admin_diagnostic_new') }}" method="post">
                 <div class="create">
-                    <label for="name">Nom du diagnostique<sup>*</sup></label>
+                    <label for="name">Nom du diagnostic<sup>*</sup></label>
                     <input type="text" id="name" name="name" value="" required>
 
                     <label for="comment">Commentaire (Admin)</label>

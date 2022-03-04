@@ -125,7 +125,7 @@ class AdminParticipationController extends AbstractController
         }
 
         // NOTE build file AND return
-        $filename = "export-csv-" . $this->getUser()->getId() . ".csv";
+        $filename = "export-csv-" . uniqid() . ".csv";
         $file = fopen($this->getParameter('csv_dir') . $filename, "w");
         fwrite($file, $content);
         fclose($file);

@@ -8,7 +8,7 @@
 
         <div class="container diagnostics question">
             <div class="head">
-                <h1 class="title">Suppression du diagnostique N°{{ diagnostic.id }}</h1>
+                <h1 class="title">Suppression du diagnostic N°{{ diagnostic.id }}</h1>
                 <a href="{{ referrer }}"><img class="icon" src="{{ asset('img/icon/return.png') }}" alt="return"></a>
             </div>
 
@@ -16,10 +16,10 @@
                 <input type="hidden" name="referrer" value="{{ referrer }}">
 
                 <div class="recap">
-                    <h2 class="title">Diagnostique : {{diagnostic.name }}</h2>
+                    <h2 class="title">Diagnostic : {{diagnostic.name }}</h2>
                     <p><i>{{ diagnostic.comment }}</i></p>
-                    <p class="participations">Ce diagnostique est connecté à <strong>{{ participations }}</strong>&nbsp;<i>participation(s)</i></p>
-                    <p class="questions">Ce diagnostique comprend <strong>{{ diagnostic.questions|length }}</strong>&nbsp;<i>questions(s)</i></p>
+                    <p class="participations">Ce diagnostic est connecté à <strong>{{ participations }}</strong>&nbsp;<i>participation(s)</i></p>
+                    <p class="questions">Ce diagnostic comprend <strong>{{ diagnostic.questions|length }}</strong>&nbsp;<i>questions(s)</i></p>
                     <br>
                     <p class="alert">NB : toutes ces participations & questions seront supprimées !</p>
                 </div>

@@ -46,6 +46,11 @@ class AdminUserController extends AbstractController
                     }
                 }
 
+                if($request->request->get('admin') === 'on')
+                    $user->setRoles(['ROLE_ADMIN']);
+                else
+                    $user->setRoles(['ROLE_USER']);
+
                 if(!$error) {
                     $em->persist($user);
                     $em->flush();

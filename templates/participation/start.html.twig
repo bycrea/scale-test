@@ -21,7 +21,10 @@
                     {# question imported here #}
                 </div>
 
-                <input type="submit" value="{{ initiate != false ? 'Continuer' : 'Commencer' }}">
+                <div>
+                    <button id="prev" class="{{ previous != false ? 'active' : '' }}" type="button">Précédent</button>
+                    <input type="submit" value="{{ initiate != false ? 'Continuer' : 'Commencer' }}">
+                </div>
             </form>
         </div>
     </div>
@@ -30,6 +33,27 @@
 
 {% block javascripts %}
     <script>
+        document.querySelector('form #prev').addEventListener('click', prevQuestion);
+        function prevQuestion(e)
+        {
+            let importDiv = document.querySelector('.import');
+
+            fetch('/participation/prev/{{ participation.id }}')
+                .then(r => r.json())
+                .then(json => {
+                    importDiv.innerHTML = json.html;
+
+                    if(json.previous === true)
+                        document.querySelector('form #prev').classList.add('active');
+                    else
+                        document.querySelector('form #prev').classList.remove('active');
+                })
+                .catch(e => {
+                    console.error(e);
+                    handleError(e);
+                });
+        }
+
         document.querySelector('form').addEventListener('submit', nextQuestion);
         function nextQuestion(e)
         {
@@ -64,6 +88,10 @@
                     }
 
                     document.querySelector('input[type="submit"]').value = "Continuer";
+                    if(json.previous === true)
+                        document.querySelector('form #prev').classList.add('active');
+                    else
+                        document.querySelector('form #prev').classList.remove('active');
                 })
                 .catch(e => {
                     console.error(e);

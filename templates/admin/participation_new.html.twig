@@ -25,7 +25,7 @@
                         {{ include('admin/participation_switch_username.html.twig') }}
                     </select>
 
-                    <label for="diagnostic">Associer un diagnostique</label>
+                    <label for="diagnostic">Associer un diagnostic</label>
                     <select name="diagnostics[]" id="diagnostic" multiple required>
                         {% for diagnostic in diagnostics %}
                             <option value="{{ diagnostic.id }}">{{ diagnostic.name }}</option>

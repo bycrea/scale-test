@@ -9,7 +9,7 @@ class CsvService
     public static function buildHeader(Participation $participation, array $categories): string
     {
         $line  = "ID";
-        $line .= ";Diagnostique";
+        $line .= ";Diagnostic";
         $line .= ";Participant";
         $line .= ";Email";
         $line .= ";Entreprise";

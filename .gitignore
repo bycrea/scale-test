@@ -1,5 +1,7 @@
 
 ###> symfony/framework-bundle ###
+!*.gitkeep
+/exports/csv/*
 /migrations/*
 /.env*
 /config/secrets/prod/prod.decrypt.private.php

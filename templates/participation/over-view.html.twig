@@ -10,8 +10,16 @@
                     <a href="{{ path('index') }}"><img src="{{ asset('img/logo.svg') }}" alt="logo scaleChanger"></a>
                 </div>
                 <h2 class="title">Vos résultat pour : {{ participation.diagnostic.name }}</h2>
+
+                {% set maturities = "<span class='maturity'>" %}
+                {% for key, maturity in participation.diagnostic.globalScale %}
+                    {% set maturities = maturities ~ (maturity.label == participation.results.maturity ? "<b>" ~ participation.results.maturity ~ "</b>" : maturity.label) %}
+                    {% set maturities = maturities ~ (key < participation.diagnostic.globalScale|length -1 ? " - " : "") %}
+                {% endfor %}
+                {% set maturities = maturities ~ "</span>" %}
+
                 {% if participation.done == true and participation.results is defined %}
-                    <p class="infos results"><i>Stade de maturité</i> : <span class="maturity">{{ participation.results.maturity }}</span></p>
+                    <p class="infos results"><i>Stade de maturité</i> : <span class="maturity">{{ maturities|raw }}</span></p>
                 {% endif %}
             </div>
 
@@ -27,8 +35,17 @@
                     {% for category in categories %}
                         {% if category.results.maturity is not null %}
                             <tr>
-                                {% set maturity = category.results.maturity is not empty ? ' : <span class="maturity">' ~ category.results.maturity ~ '</span>' : "" %}
-                                <td class="category">{{ category.name }}{{ maturity|raw }}</td>
+                                {% set maturities = "" %}
+                                {% if category.results.maturity is not empty %}
+                                    {% set maturities = "<span class='maturity'>" %}
+                                    {% for key, maturity in constant('CATEGORY_MATURITY', participation.diagnostic) %}
+                                        {% set maturities = maturities ~ (maturity == category.results.maturity ? "<b>" ~ category.results.maturity ~ "</b>" : maturity) %}
+                                        {% set maturities = maturities ~ (key < constant('CATEGORY_MATURITY', participation.diagnostic)|length -1 ? " - " : "") %}
+                                    {% endfor %}
+                                    {% set maturities = maturities ~ "</span>" %}
+                                {% endif %}
+
+                                <td class="category">{{ category.name }}<br>{{ maturities|raw }}</td>
                             </tr>
                             {% for question in participation.diagnostic.questions %}
                                 {% if question.category == category and question.activated %}

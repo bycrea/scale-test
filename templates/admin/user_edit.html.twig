@@ -15,11 +15,16 @@
             <form action="{{ path('admin_user_edit', {id: user.id}) }}" method="post">
                 <label>Nom</label><input type="text" name="username" value="{{ user.username }}">
                 <label>Email</label><input type="email" name="email" value="{{ user.email }}">
-                <label>Entreprise</label><input type="text" name="company" value="{{ user.company }}">
+                <label>Organisation</label><input type="text" name="company" value="{{ user.company }}">
 
                 {% if user.accessPassword is not null %}
                     <label>Access Pass</label>
                     <input type="text" name="company" value="{{ user.accessPassword }}" disabled>
+
+                    <div class="admin">
+                        <label>Administrateur</label>
+                        <input type="checkbox" name="admin" {{ 'ROLE_ADMIN' in user.roles ? 'checked' : '' }}>
+                    </div>
                 {% endif %}
 
                 <input type="submit" value="{{ user.id ? 'Modifier' : 'Créer' }}">

@@ -197,11 +197,22 @@ input[type="radio"]:checked {
     font-weight: lighter;
 }
 
-#user .participation input[type="submit"] {
+#user .participation input[type="submit"],
+#user .participation button#prev {
     padding: 10px;
+    margin: 10px;
     font-size: 1.2em;
     font-weight: bold;
     color: black;
+    cursor: pointer;
+}
+
+#user .participation button#prev {
+    display: none;
+}
+
+#user .participation button#prev.active {
+    display: inline-block;
 }
 
 #user .participation .import {
@@ -294,8 +305,6 @@ input[type="radio"]:checked {
     padding: 5px;
 }
 
-#user .participation .category .question label > input {
-}
 
 /* ---- USER - PARTICIPATION - RESULTS ---- */
 #user .container.diagnostics .head.infos {
@@ -310,8 +319,9 @@ input[type="radio"]:checked {
 }
 
 #user .diagnostics .infos.results {
+    width: 100%;
     font-size: 1.2em;
-    text-align: right;
+    text-align: left;
     margin-left: auto;
 }
 
@@ -321,8 +331,15 @@ input[type="radio"]:checked {
 }
 
 #user .diagnostics .infos.results span {
+    font-weight: normal;
+    font-style: italic;
+    font-size: .8em;
+    color: black;
+}
+
+#user .diagnostics .infos.results span b {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 2.2em;
     color: #42739f;
 }
 
@@ -372,8 +389,16 @@ input[type="radio"]:checked {
 }
 
 #user .diagnostics table td .maturity {
+    margin-top: 10px;
+    font-weight: normal;
+    font-style: italic;
+    font-size: .6em;
+    color: black;
+}
+
+#user .diagnostics table td .maturity b{
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 2em;
     color: #42739f;
 }
 
@@ -524,6 +549,19 @@ input[type="radio"]:checked {
 #admin .container.user form > * {
     width: 90%;
     padding: 10px;
+}
+
+#admin .container.user .admin {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90%;
+    margin-top: 20px;
+}
+
+#admin .container.user .admin > *{
+    padding: 0;
+    margin-right: 20px;
 }
 
 #admin .pop-link {
@@ -868,6 +906,15 @@ input[type="radio"]:checked {
 #admin .container .head select,
 #admin .container .head input {
     margin: 0 1em;
+}
+
+#admin .container .head.select-all {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#admin .container .head.select-all a {
+    margin-left: 20px;
 }
 
 #admin .container table.sp-8 th,

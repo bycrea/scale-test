@@ -45,7 +45,8 @@ class ParticipationController extends AbstractController
         return $this->render('participation/start.html.twig', [
             'participation' => $participation,
             'diagnostic'    => $diagnostic,
-            'initiate'      => $participation->getMeta()['initiate'] ?? false
+            'initiate'      => $participation->getMeta()['initiate'] ?? false,
+            'previous'      => false
         ]);
     }
 
@@ -98,8 +99,51 @@ class ParticipationController extends AbstractController
         }
 
         return new JsonResponse([
-            'html'  => $html ?? "",
-            'done'  => $participation->getDone()
+            'html'      => $html ?? "",
+            'done'      => $participation->getDone(),
+            'previous'  => count($participation->getAnswers()) > 0
+        ], $error ? 400 : 200);
+    }
+
+
+    /**
+     * @Route("/prev/{participation}", name="prev", methods={"GET"})
+     */
+    public function prevQuestion(Participation $participation, Request $request, EntityManagerInterface $em): Response
+    {
+        $error = false;
+        if ($participation->getUser() !== $this->getUser())
+            $error = true;
+
+
+        $prevQuestions = $participation->getAnswers();
+        $prevQuestion  = array_key_last($prevQuestions);
+
+        if($prevQuestion !== null) {
+            array_pop($prevQuestions);
+            $participation->setAnswers($prevQuestions);
+            $participation->updateMeta('initiate', $prevQuestion);
+            $participation->unsetMeta('pending');
+
+            $em->persist($participation);
+            $em->flush();
+        } else {
+            $error = true;
+        }
+
+        $participation->updateMeta('total', $em->getRepository(Question::class)->countQuestions($participation->getDiagnostic()));
+        $participation->updateMeta('left', $participation->getMeta()['total'] - count($participation->getAnswers()));
+
+        // NOTE build previous question
+        $html = $this->renderView('participation/question_create.html.twig', [
+            'participation' => $participation,
+            'question'      => $em->getRepository(Question::class)->find($prevQuestion)
+        ]);
+
+        return new JsonResponse([
+            'html'      => $html ?? "",
+            'done'      => false,
+            'previous'  => count($participation->getAnswers()) > 0
         ], $error ? 400 : 200);
     }
 
