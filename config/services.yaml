@@ -26,3 +26,7 @@ services:
     App\Service\RequestAuthorizer:
         tags:
             - { name: kernel.event_listener, event: kernel.request }
+
+    App\Service\MailerService:
+        arguments:
+            $sender: '%env(MAILER_SENDER)%'

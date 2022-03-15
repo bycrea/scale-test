@@ -38,7 +38,7 @@
                                 <input type="checkbox" name="activate" value="{{ user.id }}" autocomplete="off" {{ user.activated ? 'checked' : '' }} {{ 'ROLE_ADMIN' in user.roles ? 'disabled' : '' }}>
                             </td>
                             <td class="small center">
-                                <a href="#" onclick="popLink('{{ app.request.getSchemeAndHttpHost ~ '/login?u=' ~ user.email ~ "&p=" ~ user.accessPassword}}')">
+                                <a href="#" onclick="popLink('{{ app.request.getSchemeAndHttpHost ~ '/login?u=' ~ user.email ~ "&p=" ~ user.accessPassword }}', '{{ user.id }}')">
                                     <img class="icon" src="{{ asset('img/icon/link.png') }}" alt="copy">
                                 </a>
                             </td>
@@ -64,6 +64,9 @@
             <div class="copy">
                 <label for="">Lien de connexion :</label>
                 <input type="text" name="copy" value="">
+                <a class="send" href="#" onclick="sendLink()">
+                    <span>Renvoyer le lien de connexion</span><img class="icon" src="{{ asset('img/icon/send.png') }}" alt="send">
+                </a>
             </div>
         </div>
     </main>
@@ -86,10 +89,17 @@
         let popup = document.querySelector('.pop-link');
         popup.addEventListener('click', closePopLink);
 
-        function popLink(link)
+        function popLink(link, id)
         {
+            popup.dataset.id = id;
             popup.querySelector('input[name="copy"]').value = link;
             popup.classList.add('active');
+        }
+
+        function sendLink()
+        {
+            const id = popup.dataset.id;
+            fetch('/admin/user/send-link/' + id).then(r => console.log('ok'));
         }
 
         function closePopLink(e)
