@@ -99,7 +99,9 @@
         function sendLink()
         {
             const id = popup.dataset.id;
-            fetch('/admin/user/send-link/' + id).then(r => console.log('ok'));
+            fetch('/admin/user/send-link/' + id).then(r => {
+                popup.classList.remove('active');
+            });
         }
 
         function closePopLink(e)
