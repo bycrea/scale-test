@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use function Symfony\Component\String\b;
 
 /**
  * @Route("/admin/participation", name="admin_participation_")
@@ -51,7 +52,7 @@ class AdminParticipationController extends AbstractController
 
         return $this->render('admin/participation_new.html.twig', [
             'active'      => 'participation',
-            'users'       => $em->getRepository(User::class)->findBy([], ['username' => 'ASC']),
+            'users'       => $em->getRepository(User::class)->findBy(['activated' => 1], ['id' => 'DESC']),
             'diagnostics' => $em->getRepository(Diagnostic::class)->findBy([], ['lastUpdate' => 'DESC'])
         ]);
     }
@@ -155,12 +156,15 @@ class AdminParticipationController extends AbstractController
 
 
     /**
-     * @Route("/switch/{search}", name="switch", methods={"GET"})
+     * @Route("/switch", name="switch", methods={"GET"})
      */
-    public function switchSearch(string $search, EntityManagerInterface $em): Response
+    public function switchSearch(Request $request, EntityManagerInterface $em): Response
     {
-        return $this->render("admin/participation_switch_$search.html.twig", [
-            'users' => $em->getRepository(User::class)->findBy([], [$search => 'ASC'])
+        $sort = $request->query->get('sort', 'id');
+        $by   = $request->query->get('by', 'DESC');
+
+        return $this->render("admin/participation_switch_$sort.html.twig", [
+            'users' => $em->getRepository(User::class)->findBy(['activated' => 1], [$sort => $by])
         ]);
     }
 

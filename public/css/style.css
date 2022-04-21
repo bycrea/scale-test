@@ -956,6 +956,7 @@ input[type="radio"]:checked {
 }
 
 #admin .container.participations form select {
+    min-height: 250px;
     padding: 10px;
     margin-bottom: 50px;
 }
@@ -972,14 +973,19 @@ input[type="radio"]:checked {
     margin-left: 5px;
 }
 
+#admin .container.participations form select#switch-order {
+    min-height: unset;
+    padding: 5px;
+    margin: 0 0 0 10px !important;
+}
+
 #admin .container.participations form .switch input[name="search"] {
     min-width: 300px;
     padding: 2px 5px;
     margin-left: 10px;
 }
 
-
-#admin .container.participations form label[for="username"] {
+#admin .container.participations form label[for="date"] {
     margin-left: auto;
 }
 

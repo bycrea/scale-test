@@ -18,8 +18,13 @@
                         <label for="user">Choisir un utilisateur</label>
                         <input type="text" name="search" autocomplete="off" placeholder="rechercher">
 
-                        <label for="username">Noms<input id="username" type="radio" name="switch-search" autocomplete="off" value="username" checked></label>
+                        <label for="date">Date<input id="date" type="radio" name="switch-search" autocomplete="off" value="id" checked></label>
+                        <label for="username">Noms<input id="username" type="radio" name="switch-search" autocomplete="off" value="username"></label>
                         <label for="email">Email<input id="email" type="radio" name="switch-search" autocomplete="off" value="email"></label>
+                        <select id="switch-order" name="switch-order" autocomplete="off">
+                            <option value="DESC" selected>&uarr;</option>
+                            <option value="ASC">&darr;</option>
+                        </select>
                     </div>
                     <select name="users[]" id="user" multiple required>
                         {{ include('admin/participation_switch_username.html.twig') }}
@@ -53,11 +58,20 @@
 
         document.querySelectorAll('input[name="switch-search"]').forEach(i => {
             i.addEventListener('change', e => {
-                fetch('/admin/participation/switch/' + e.target.value)
-                    .then(r => r.text()).then(html => {
-                        document.querySelector('select[name="users[]"]').innerHTML = html;
-                    });
+                fetchSortBy(e.target.value, document.querySelector('select[name="switch-order"]').value);
             });
         });
+
+        document.querySelector('select[name="switch-order"]').addEventListener('change', e => {
+            fetchSortBy(document.querySelector('input[name="switch-search"]:checked').value, e.target.value);
+        });
+
+        function fetchSortBy(sort = "id", by = "DESC")
+        {
+            fetch(`/admin/participation/switch?sort=${sort}&by=${by}`)
+                .then(r => r.text()).then(html => {
+                document.querySelector('select[name="users[]"]').innerHTML = html;
+            });
+        }
     </script>
 {% endblock %}

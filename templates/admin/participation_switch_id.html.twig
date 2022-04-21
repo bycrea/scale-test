@@ -1,0 +1,4 @@
+
+{% for user in users %}
+    <option value="{{ user.id }}">{{ user.username }} - {{ user.email }}{{ user.company is defined ? " (" ~ user.company ~ ")": "" }}</option>
+{% endfor %}
