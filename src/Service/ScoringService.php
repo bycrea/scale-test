@@ -79,7 +79,13 @@ class ScoringService
             }
 
             // NOTE Get category maturity
-            if($category->results['scores'] == 0 || $category->results['scoresMax'] == 0) continue;
+            if($category->results['scoresMax'] == 0) continue;
+
+            // NOTE remove if Line:82 is working
+            /*if($category->results['scores'] == 0 || $category->results['scoresMax'] == 0) {
+                $category->results['maturity'] = Diagnostic::CATEGORY_MATURITY[0];
+                continue;
+            }*/
 
             $scale  = $category->results['percentage'] = $category->results['scores'] / $category->results['scoresMax'] * 100;
             $scales = $participation->getDiagnostic()->getCategoriesScales()[$category->getId()];
